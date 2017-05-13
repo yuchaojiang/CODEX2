@@ -1,0 +1,16 @@
+Package: CODEX
+===================
+08/30/2016
+Updated website and Google Group information.
+
+04/24/2016
+Fixed bugs in normalization function, updated segmentation function.
+
+03/13/2016
+Cloned to GitHub. Made minor updates.
+
+03/07/2015
+Fixed bugs in function normalize() that relate to NaN output in AIC and BIC.
+Fixed bugs in function getcoverage() that relate to NaN read length (cannot get read depth for single end sequencing bams).
+Added function normalize2() for WES under case-control setting.
+Added p-values for output CNVs by the Wilk's theorem.
