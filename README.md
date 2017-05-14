@@ -1,9 +1,5 @@
-<img border="0" src="http://bioconductor.org/shields/availability/release/CODEX.svg"/> <img border="0" src="http://bioconductor.org/shields/downloads/CODEX.svg"/> <img border="0" src="http://bioconductor.org/shields/build/devel/bioc/CODEX.svg"/> <img border="0" src="http://bioconductor.org/shields/years-in-bioc/CODEX.svg"/>
-
-
-# CODEX
-A Normalization and Copy Number Variation Detection Method for Whole Exome Sequencing
-
+# CODEX2
+Full-spectrum copy number variation detection by high-throughput DNA sequencing
 
 ## Author
 Yuchao Jiang, Nancy R. Zhang
@@ -12,15 +8,7 @@ Yuchao Jiang, Nancy R. Zhang
 Yuchao Jiang <yuchaoj@upenn.edu>
 
 ## Description
-A normalization and copy number variation calling procedure for
-whole exome DNA sequencing data. CODEX relies on the availability of 
-multiple samples processed using the same sequencing pipeline for 
-normalization, and does not require matched controls. The normalization 
-model in CODEX includes terms that specifically remove biases due to GC 
-content, exon length and targeting and amplification efficiency, and latent
-systemic artifacts. CODEX also includes a Poisson likelihood-based recursive
-segmentation procedure that explicitly models the count-based exome 
-sequencing data.
+Copy number variations (CNV) is an important type of genomic variant that has been associated with diseases. High-throughput DNA sequencing enables detection of CNVs on the genome-wide scale with finer resolutions. To detect CNVs with high sensitivity and specificity is, however, challenging due to the high level of biases and artifacts. We describe CODEX2, a statistical framework for profiling full-spectrum CNVs with common and rare population frequencies under experimental settings with and without negative control samples. While CODEX2 can be applied to whole-genome, whole-exome, and targeted sequencing, we demonstrate and evaluate performance of CODEX2 by whole-exome and targeted sequencing, where biases are the most prominent and cannot be ignored. We apply CODEX2 to whole-exome sequencing data from the 1000 Genomes Project and show that it outperforms existing methods with significant improvement in detecting common CNVs. CODEX2 is also applied to targeted sequencing data from a case-control study of melanoma patients and cell lines and identify somatic CNVs in concordance with an independent cohort from the Cancer Genome Atlas.
 
 
 ## Installation
@@ -51,7 +39,7 @@ https://groups.google.com/d/forum/codex_wes_cnv
 
 
 ## Citation
-Jiang, Y., Oldridge, D.A., Diskin, S.J. and Zhang, N.R., 2015. CODEX: a normalization and copy number variation detection method for whole exome sequencing. *Nucleic acids research*, 43(6), pp.e39-e39. [[html](http://nar.oxfordjournals.org/content/43/6/e39), [pdf](http://nar.oxfordjournals.org/content/43/6/e39.full.pdf+html)]
+Yuchao Jiang, Katherine L Nathanson, Nancy R Zhang, 2017. Full-spectrum copy number variation detection by high-throughput DNA sequencing. *Submitted*.
 
 
 ## IMPORTANT: CODEX for cancer genomics
