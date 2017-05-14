@@ -12,19 +12,10 @@ Copy number variations (CNV) is an important type of genomic variant that has be
 
 
 ## Installation
-* Install the current release from Bioconductor
-```r
-## try http:// if https:// URLs are not supported
-source("https://bioconductor.org/biocLite.R")
-biocLite("CODEX")
-biocLite("WES.1KG.WUGSC") # toy dataset
-```
-
-* Install the devel version from GitHub
 ```r
 install.packages("devtools")
 library(devtools)
-install_github("yuchaojiang/CODEX/package")
+install_github("yuchaojiang/CODEX2/package")
 ```
 
 ## Demo code & Vignettes
