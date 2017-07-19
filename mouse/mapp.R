@@ -1,4 +1,4 @@
-library(CODEX)
+library(CODEX2)
 library(WES.1KG.WUGSC) # Load Toy data from the 1000 Genomes Project.
 dirPath <- system.file("extdata", package = "WES.1KG.WUGSC")
 bamFile <- list.files(dirPath, pattern = '*.bam$')
