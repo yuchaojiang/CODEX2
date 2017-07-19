@@ -13,6 +13,12 @@ High-throughput DNA sequencing enables detection of copy number variations (CNVs
 
 ## Installation
 ```r
+# Install dependent packages first
+source("https://bioconductor.org/biocLite.R")
+biocLite("GenomeInfoDb")
+biocLite("BSgenome.Hsapiens.UCSC.hg19")
+biocLite("WES.1KG.WUGSC")
+
 install.packages("devtools")
 library(devtools)
 install_github("yuchaojiang/CODEX2/package")
