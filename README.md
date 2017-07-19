@@ -25,8 +25,8 @@ install_github("yuchaojiang/CODEX2/package")
 * [Bioconductor download stats](http://bioconductor.org/packages/stats/bioc/CODEX/)
 
 
-## Google user group (Q&A)
-https://groups.google.com/d/forum/codex_wes_cnv
+## Questions?
+If you've encountered problems running CODEX2, please read through this page and if you still cannot solve them, please report directly [here](https://github.com/yuchaojiang/CODEX2/issues) using the Issues tab by GitHub.
 
 
 ## Citation
