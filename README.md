@@ -43,7 +43,7 @@ One can load CODEX2's CNV calling results into [IGV](http://www.broadinstitute.o
 * [CODEX2_IGV.R](https://github.com/yuchaojiang/CODEX2/blob/master/IGV_visualization/CODEX2_IGV.R)
 
 ## CODEX2 for hg38?
-CODEX2 by default is for hg19 reference. It can be adapted to hg38: only the calculations of GC content and mappability need to be changed; to get coverage for exons across samples stays the same (make sure that the exonic targets in the bed file are also in hg38 coordinates). To calculte GC content in hg38, you need to download the hg38 reference from [Bioconductor](https://bioconductor.org/packages/BSgenome.Hsapiens.UCSC.hg38/). Then, after loading CODEX2, load the hg38 reference package so that the Hsapiens (hg19 by CODEX's default) is masked to hg38. Note that the getgc() function needs to be sourced again so that the correct version of Hsapiens is used.
+CODEX2 by default is for hg19 reference. It can be adapted to hg38: only the calculations of GC content and mappability need to be changed; to get coverage for exons across samples stays the same (make sure that the exonic targets in the bed file are also in hg38 coordinates). To calculte GC content in hg38, you need to download the hg38 reference from [Bioconductor](https://bioconductor.org/packages/BSgenome.Hsapiens.UCSC.hg38/). Then, after loading CODEX2, load the hg38 reference package so that the Hsapiens (hg19 by CODEX2's default) is masked to hg38. Note that the getgc() function needs to be sourced again so that the correct version of Hsapiens is used.
 
 ```r
 ## try http:// if https:// URLs are not supported
