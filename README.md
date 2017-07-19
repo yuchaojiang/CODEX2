@@ -35,7 +35,7 @@ When apply CODEX2 to whole-exome sequencing and targeted sequencing in cancer ge
 
 ## CODEX2 for targeted sequencing
 We've adapted CODEX for targeted sequencing. Instead of normalizing and segmenting each chromosome separately, for targeted sequencing, we combine all targets across the genome to perform normalization, followed by segmentation within each gene. Refer to codes below (need to source segment_targeted.R for gene-based segmentation).
-* [codex_targeted.R](https://github.com/yuchaojiang/CODEX2/blob/master/targeted_sequencing/codex_targeted.R)
+* [codex2_targeted.R](https://github.com/yuchaojiang/CODEX2/blob/master/targeted_sequencing/codex2_targeted.R)
 * [segment_targeted.R](https://github.com/yuchaojiang/CODEX2/blob/master/targeted_sequencing/segment_targeted.R)
 
 ## Visualization by IGV
