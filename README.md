@@ -43,7 +43,7 @@ One can load CODEX2's CNV calling results into [IGV](http://www.broadinstitute.o
 * [CODEX2_IGV.R](https://github.com/yuchaojiang/CODEX2/blob/master/IGV_visualization/CODEX2_IGV.R)
 
 ## CODEX2 for hg38?
-CODEX2 by default is for hg19 reference. It can be adapted to hg38: only the calculations of GC content and mappability need to be changed; to get coverage for exons across samples stays the same (make sure that the exonic targets in the bed file are also in hg38 coordinates). To calculte GC content in hg38, you need to download the hg38 reference from [Bioconductor](https://bioconductor.org/packages/BSgenome.Hsapiens.UCSC.hg38/). Then, after loading CODEX2, load the hg38 reference package so that the Hsapiens (hg19 by CODEX's default) is masked to hg38.
+CODEX2 by default is for hg19 reference. It can be adapted to hg38: only the calculations of GC content and mappability need to be changed; to get coverage for exons across samples stays the same (make sure that the exonic targets in the bed file are also in hg38 coordinates). To calculte GC content in hg38, you need to download the hg38 reference from [Bioconductor](https://bioconductor.org/packages/BSgenome.Hsapiens.UCSC.hg38/). Then, after loading CODEX2, load the hg38 reference package so that the Hsapiens (hg19 by CODEX2's default) is masked to hg38.
 
 ```r
 ## try http:// if https:// URLs are not supported
@@ -54,18 +54,18 @@ library(CODEX2)
 library(BSgenome.Hsapiens.UCSC.hg38)
 # The following object is masked from ‘package:BSgenome.Hsapiens.UCSC.hg19’:  Hsapiens
 ```
-To calculate mappability for hg38 is a bit more complicated and time-consuming. For CODEX, we pre-compute mappabilities for all hg19 exons and store them as part of the package. For hg38, there are two workarounds: 1) set all mappability to 1 using mapp=rep(1,length(gc)) since mappability is only used in the QC step to filter out exons with low mappability and thus should not affect the final output too much; 2) adopt QC procedures based on annotation results, e.g., filter out all exons within segmental duplication regions, which generally have low mappability.
+To calculate mappability for hg38 is a bit more complicated and time-consuming. For CODEX2, we pre-compute mappabilities for all hg19 exons and store them as part of the package. For hg38, there are two workarounds: 1) set all mappability to 1 using mapp=rep(1,length(gc)) since mappability is only used in the QC step to filter out exons with low mappability and thus should not affect the final output too much; 2) adopt QC procedures based on annotation results, e.g., filter out all exons within segmental duplication regions, which generally have low mappability.
 
-Note that CODEX can also be adapted to the mouse genome, see below.
+Note that CODEX2 can also be adapted to the mouse genome, see below.
 
 ## CODEX2 for mouse genome
-CODEX can be applied to WES of the mouse genome. The library for the mm10 mouse genome sequencing needs to be loaded: 
+CODEX2 can be applied to WES of the mouse genome. The library for the mm10 mouse genome sequencing needs to be loaded: 
 * [BSgenome.Mmusculus.UCSC.mm10](http://bioconductor.org/packages/release/data/annotation/html/BSgenome.Mmusculus.UCSC.mm10.html).
 
 The GC content and the mappability can be obtained from the code below with minor adaptations for the mouse genome:
-* [GC content](https://github.com/yuchaojiang/CODEX/blob/master/mouse/getgc.R)
-* [Mappability pre-calculation](https://github.com/yuchaojiang/CODEX/blob/master/mouse/mapp.R) (Note: This step can be computationally extensive and thus parallel computing is recommended. For CODEX in its default setting, the mappability for exonic targets in human h19 assembly is pre-computed and stored as part of the package).
-* [Mappability](https://github.com/yuchaojiang/CODEX/blob/master/mouse/getmapp.R)
+* [GC content](https://github.com/yuchaojiang/CODEX2/blob/master/mouse/getgc.R)
+* [Mappability pre-calculation](https://github.com/yuchaojiang/CODEX2/blob/master/mouse/mapp.R) (Note: This step can be computationally extensive and thus parallel computing is recommended. For CODEX in its default setting, the mappability for exonic targets in human h19 assembly is pre-computed and stored as part of the package).
+* [Mappability](https://github.com/yuchaojiang/CODEX2/blob/master/mouse/getmapp.R)
 
 ## Common questions
   * How many samples does CODEX2 need? Should I separately run samples from different batches?
