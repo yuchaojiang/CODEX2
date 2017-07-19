@@ -6,7 +6,7 @@
 ######################################################
 ######################################################
 
-library(CODEX)
+library(CODEX2)
 bamdir=as.matrix(read.table('bamlist'))
 sampname=as.matrix(read.table('sampname.txt'))
 projectname='melanoma_exon'
@@ -69,7 +69,7 @@ save.image(file=paste(projectname,'_','coverage','.rda',sep=''))
 ######################################################
 ######################################################
 
-library(CODEX)
+library(CODEX2)
 projectname='melanoma_exon'
 load(paste(projectname,'_coverage.rda',sep=''))
 
@@ -123,7 +123,7 @@ save.image(file=paste(projectname,'_','normalize','.rda',sep=''))
 ######################################################
 ######################################################
 
-library(CODEX)
+library(CODEX2)
 projectname='melanoma_exon'
 load(paste(projectname,'_normalize.rda',sep=''))
 
