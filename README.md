@@ -43,7 +43,7 @@ One can load CODEX2's CNV calling results into [IGV](http://www.broadinstitute.o
 * [CODEX2_IGV.R](https://github.com/yuchaojiang/CODEX2/blob/master/IGV_visualization/CODEX2_IGV.R)
 
 ## CODEX2 for hg38?
-CODEX2 by default is for hg19 reference. It can be adapted to hg38: only the calculations of GC content and mappability need to be changed; to get coverage for exons across samples stays the same (make sure that the exonic targets in the bed file are also in hg38 coordinates). To calculte GC content in hg38, you need to download the hg38 reference from [Bioconductor](https://bioconductor.org/packages/BSgenome.Hsapiens.UCSC.hg38/). Then, after loading CODEX2, load the hg38 reference package so that the Hsapiens (hg19 by CODEX2's default) is masked to hg38.
+CODEX2 by default is for hg19 reference. It can be adapted to hg38: only the calculations of GC content and mappability need to be changed; to get coverage for exons across samples stays the same (make sure that the exonic targets in the bed file are also in hg38 coordinates). To calculte GC content in hg38, you need to download the hg38 reference from [Bioconductor](https://bioconductor.org/packages/BSgenome.Hsapiens.UCSC.hg38/). Then, after loading CODEX2, load the hg38 reference package so that the Hsapiens (hg19 by CODEX's default) is masked to hg38. Note that the getgc() function needs to be sourced again so that the correct version of Hsapiens is used.
 
 ```r
 ## try http:// if https:// URLs are not supported
@@ -53,6 +53,23 @@ biocLite("BSgenome.Hsapiens.UCSC.hg38")
 library(CODEX2)
 library(BSgenome.Hsapiens.UCSC.hg38)
 # The following object is masked from ‘package:BSgenome.Hsapiens.UCSC.hg19’:  Hsapiens
+
+# Source getgc() function again so it uses the right Hsapiens
+getgc = function (chr, ref) {
+  if (chr == "X" | chr == "x" | chr == "chrX" | chr == "chrx") {
+    chrtemp <- 23
+  } else if (chr == "Y" | chr == "y" | chr == "chrY" | chr == "chry") {
+    chrtemp <- 24
+  } else {
+    chrtemp <- as.numeric(mapSeqlevels(as.character(chr), "NCBI")[1])
+  }
+  if (length(chrtemp) == 0) message("Chromosome cannot be found in NCBI Homo sapiens database!")
+  chrm <- unmasked(Hsapiens[[chrtemp]])
+  seqs <- Views(chrm, ref)
+  af <- alphabetFrequency(seqs, baseOnly = TRUE, as.prob = TRUE)
+  gc <- round((af[, "G"] + af[, "C"]) * 100, 2)
+  gc
+}
 ```
 To calculate mappability for hg38 is a bit more complicated and time-consuming. For CODEX2, we pre-compute mappabilities for all hg19 exons and store them as part of the package. For hg38, there are two workarounds: 1) set all mappability to 1 using mapp=rep(1,length(gc)) since mappability is only used in the QC step to filter out exons with low mappability and thus should not affect the final output too much; 2) adopt QC procedures based on annotation results, e.g., filter out all exons within segmental duplication regions, which generally have low mappability.
 
