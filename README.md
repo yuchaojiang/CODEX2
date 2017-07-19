@@ -5,10 +5,10 @@ Full-spectrum copy number variation detection by high-throughput DNA sequencing
 Yuchao Jiang, Nancy R. Zhang
 
 ## Maintainer
-Yuchao Jiang <yuchaoj@upenn.edu>
+Yuchao Jiang <yuchaoj@email.unc.edu>
 
 ## Description
-Copy number variations (CNV) is an important type of genomic variant that has been associated with diseases. High-throughput DNA sequencing enables detection of CNVs on the genome-wide scale with finer resolutions. To detect CNVs with high sensitivity and specificity is, however, challenging due to the high level of biases and artifacts. We describe CODEX2, a statistical framework for profiling full-spectrum CNVs with common and rare population frequencies under experimental settings with and without negative control samples. While CODEX2 can be applied to whole-genome, whole-exome, and targeted sequencing, we demonstrate and evaluate performance of CODEX2 by whole-exome and targeted sequencing, where biases are the most prominent and cannot be ignored. We apply CODEX2 to whole-exome sequencing data from the 1000 Genomes Project and show that it outperforms existing methods with significant improvement in detecting common CNVs. CODEX2 is also applied to targeted sequencing data from a case-control study of melanoma patients and cell lines and identify somatic CNVs in concordance with an independent cohort from the Cancer Genome Atlas.
+High-throughput DNA sequencing enables detection of copy number variations (CNVs) on the genome-wide scale with finer resolution compared to array-based methods, but suffers from biases and artifacts that lead to false discoveries and low sensitivity. We describe CODEX2, a statistical framework for full-spectrum CNV profiling that is sensitive for variants with both common and rare population frequencies and that is applicable to study designs with and without negative control samples. We demonstrate and evaluate CODEX2 on whole-exome and targeted sequencing data, where biases are the most prominent. CODEX2 outperforms existing methods and, in particular, significantly improves sensitivity for common CNVs.
 
 
 ## Installation
