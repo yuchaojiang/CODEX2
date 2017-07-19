@@ -26,7 +26,7 @@ install_github("yuchaojiang/CODEX2/package")
 
 
 ## Questions?
-If you've encountered problems running CODEX2, please read through this page and if you still cannot solve them, please report directly [here](https://github.com/yuchaojiang/CODEX2/issues) using the Issues tab by GitHub.
+If you've encountered problems or bugs running CODEX2, please report directly [here](https://github.com/yuchaojiang/CODEX2/issues) using the Issues tab by GitHub.
 
 
 ## Citation
