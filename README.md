@@ -34,23 +34,23 @@ When apply CODEX2 to whole-exome sequencing and targeted sequencing in cancer ge
 * For segmentation with paired tumor-normal experimental design, a modified CBS (circular binary segmentation) algorithm can be adopted, which ultilizes the pair information. Refer to the paired_tumor_normal_segmentation folder for code (not actively updated/maintained). Note that, from our experience, the default segmentation by CODEX (not using the pair information) does not make much difference. Normalization is the first order effect in WES study design.
 
 ## CODEX2 for targeted sequencing
-We've adapted CODEX for targeted sequencing. Instead of normalizing and segmenting each chromosome separately, for targeted sequencing, we combine all targets across the genome to perform normalization, followed by segmentation within each gene. Refer to codes below (need to source segment_targeted.R for gene-based segmentation).
+We've adapted CODEX2 for targeted sequencing. Instead of normalizing and segmenting each chromosome separately, for targeted sequencing, we combine all targets across the genome to perform normalization, followed by segmentation within each gene. Refer to codes below (need to source segment_targeted.R for gene-based segmentation).
 * [codex2_targeted.R](https://github.com/yuchaojiang/CODEX2/blob/master/targeted_sequencing/codex2_targeted.R)
 * [segment_targeted.R](https://github.com/yuchaojiang/CODEX2/blob/master/targeted_sequencing/segment_targeted.R)
 
 ## Visualization by IGV
-One can load CODEX's CNV calling results into [IGV](http://www.broadinstitute.org/igv/) for visualization by generating a tab-delimited seg file for each sample. Below is a sample code that we use in our daily practice -- for each sample, a *.seg.txt file is generated with six columns and header 'Sample', 'Chromosome','Start','End','Num_Probes','Segment_Mean', which correspond to sample name, chromosome, CNV start bp, CNV end bp, number of exonic targets, and log ratio of raw (i.e. observed) depths of coverage versus normalized (i.e. expected) coverage (deletion has a negative log ratio, duplication has a positive log ratio, copy-neutral region has a log ratio around 0).
-* [CODEX_IGV.R](https://github.com/yuchaojiang/CODEX/blob/master/IGV_visualization/CODEX_IGV.R)
+One can load CODEX2's CNV calling results into [IGV](http://www.broadinstitute.org/igv/) for visualization by generating a tab-delimited seg file for each sample. Below is a sample code that we use in our daily practice -- for each sample, a *.seg.txt file is generated with six columns and header 'Sample', 'Chromosome','Start','End','Num_Probes','Segment_Mean', which correspond to sample name, chromosome, CNV start bp, CNV end bp, number of exonic targets, and log ratio of raw (i.e. observed) depths of coverage versus normalized (i.e. expected) coverage (deletion has a negative log ratio, duplication has a positive log ratio, copy-neutral region has a log ratio around 0).
+* [CODEX2_IGV.R](https://github.com/yuchaojiang/CODEX2/blob/master/IGV_visualization/CODEX2_IGV.R)
 
-## CODEX for hg38?
-CODEX by default is for hg19 reference. It can be adapted to hg38: only the calculations of GC content and mappability need to be changed; to get coverage for exons across samples stays the same (make sure that the exonic targets in the bed file are also in hg38 coordinates). To calculte GC content in hg38, you need to download the hg38 reference from [Bioconductor](https://bioconductor.org/packages/BSgenome.Hsapiens.UCSC.hg38/). Then, after loading CODEX, load the hg38 reference package so that the Hsapiens (hg19 by CODEX's default) is masked to hg38.
+## CODEX2 for hg38?
+CODEX2 by default is for hg19 reference. It can be adapted to hg38: only the calculations of GC content and mappability need to be changed; to get coverage for exons across samples stays the same (make sure that the exonic targets in the bed file are also in hg38 coordinates). To calculte GC content in hg38, you need to download the hg38 reference from [Bioconductor](https://bioconductor.org/packages/BSgenome.Hsapiens.UCSC.hg38/). Then, after loading CODEX2, load the hg38 reference package so that the Hsapiens (hg19 by CODEX's default) is masked to hg38.
 
 ```r
 ## try http:// if https:// URLs are not supported
 source("https://bioconductor.org/biocLite.R")
 biocLite("BSgenome.Hsapiens.UCSC.hg38")
 
-library(CODEX)
+library(CODEX2)
 library(BSgenome.Hsapiens.UCSC.hg38)
 # The following object is masked from ‘package:BSgenome.Hsapiens.UCSC.hg19’:  Hsapiens
 ```
@@ -58,7 +58,7 @@ To calculate mappability for hg38 is a bit more complicated and time-consuming. 
 
 Note that CODEX can also be adapted to the mouse genome, see below.
 
-## CODEX for mouse genome
+## CODEX2 for mouse genome
 CODEX can be applied to WES of the mouse genome. The library for the mm10 mouse genome sequencing needs to be loaded: 
 * [BSgenome.Mmusculus.UCSC.mm10](http://bioconductor.org/packages/release/data/annotation/html/BSgenome.Mmusculus.UCSC.mm10.html).
 
@@ -68,21 +68,18 @@ The GC content and the mappability can be obtained from the code below with mino
 * [Mappability](https://github.com/yuchaojiang/CODEX/blob/master/mouse/getmapp.R)
 
 ## Common questions
-  * How many samples does CODEX need? Should I separately run samples from different batches?
+  * How many samples does CODEX2 need? Should I separately run samples from different batches?
     
-    We have applied CODEX to data sets of sample size ranging from 30 to 500. Yes, samples from different batches are highly recommended to run separately. The Poisson latent factor can presumably capture the batch effects but if additional knowledge is available beforehand, it should be ultilized. If batch information is not available, sometimes we refer to the header within the bam files.
+    We have applied CODEX2 to data sets of sample size ranging from 30 to 500. Yes, samples from different batches are highly recommended to run separately. The Poisson latent factor can presumably capture the batch effects but if additional knowledge is available beforehand, it should be ultilized. If batch information is not available, sometimes we refer to the header within the bam files.
     
   * Error in glm.fit?
     
-    Yes, we are aware that sometimes the normalize() function leads to error in glm.fit. CODEX adopts an iterative estimation procedure to estimate the Poisson latent factors via Poisson glm, the exon-specific bias by taking the median across all samples, and the GC content bias by fitting a non-parametric smooth.spline. We did our best to make sure that the iteration/estimation runs properly, yet sometimes the Poisson glm function in R still fails to converge due to: (1) extreme heterogeneity in the data (i.e., the data is just too noisy or the samples are from multiple batches); (2) the number of Poisson latent factors to estimate is too large. See question below.
+    Yes, we are aware that sometimes the normalize() function leads to error in glm.fit. CODEX2 adopts an iterative estimation procedure to estimate the Poisson latent factors via Poisson glm, the exon-specific bias by taking the median across all samples, and the GC content bias by fitting a non-parametric smooth.spline. We did our best to make sure that the iteration/estimation runs properly, yet sometimes the Poisson glm function in R still fails to converge due to: (1) extreme heterogeneity in the data (i.e., the data is just too noisy or the samples are from multiple batches); (2) the number of Poisson latent factors to estimate is too large. See question below.
     
   * What is the range of K? Which one is optimal?
   
-    Based on our experience, very rarely do we run CODEX with greater than 10 latent factors (i.e., K = 1:10 suffices for most, if not all, datasets we have). The larger the K is, the longer the estimation takes. Also, refer to the previous question regarding potential pitfalls with a large value of K.
+    Based on our experience, very rarely do we run CODEX2 with greater than 10 latent factors (i.e., K = 1:10 suffices for most, if not all, datasets we have). The larger the K is, the longer the estimation takes. Also, refer to the previous question regarding potential pitfalls with a large value of K.
     
-    CODEX includes three statistical metrics to help the users more wisely choose the optimal K: AIC, BIC, and residual variance. A pdf plot is automatically generated by the choiceofK() function. Sometimes the optimal value based on the metrics are not clear. In this case, we recommend a sanity check by focusing on known positive/negative controls and visualizing the normalization/segmentation results. For normalize2() which specifies the normal samples, the effect on different optimal K values diminishes since only the normal samples are used to estimate the exon-wise biases and latent factors.
-    
-    
-    
-    
-    
+    CODEX2 includes three statistical metrics to help the users more wisely choose the optimal K: AIC, BIC, and residual variance. A pdf plot is automatically generated by the choiceofK() function. Sometimes the optimal value based on the metrics are not clear. In this case, we recommend a sanity check by focusing on known positive/negative controls and visualizing the normalization/segmentation results. For normalize2() which specifies the normal samples, the effect on different optimal K values diminishes since only the normal samples are used to estimate the exon-wise biases and latent factors.
+
+
