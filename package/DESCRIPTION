@@ -1,21 +1,19 @@
-Package: CODEX
+Package: CODEX2
 Type: Package
-Title: A Normalization and Copy Number Variation Detection Method for Whole
-    Exome Sequencing
-Version: 1.5.1
+Title: Full-spectrum copy number variation detection by high-throughput DNA sequencing
+Version: 1.0.0
 Author: Yuchao Jiang, Nancy R. Zhang
-Maintainer: Yuchao Jiang <yuchaoj@wharton.upenn.edu>
-Description: A normalization and copy number variation calling procedure for
-    whole exome DNA sequencing data. CODEX relies on the availability of 
-    multiple samples processed using the same sequencing pipeline for 
-    normalization, and does not require matched controls. The normalization 
-    model in CODEX includes terms that specifically remove biases due to GC 
-    content, exon length and targeting and amplification efficiency, and latent
-    systemic artifacts. CODEX also includes a Poisson likelihood-based recursive
-    segmentation procedure that explicitly models the count-based exome 
-    sequencing data.
+Maintainer: Yuchao Jiang <yuchaoj@email.unc.edu>
+Description: High-throughput DNA sequencing enables detection of copy number variations
+    (CNVs) on the genome-wide scale with finer resolution compared to array-based methods,
+    but suffers from biases and artifacts that lead to false discoveries and low sensitivity.
+    We describe CODEX2, a statistical framework for full-spectrum CNV profiling that is 
+    sensitive for variants with both common and rare population frequencies and that is
+    applicable to study designs with and without negative control samples. We demonstrate
+    and evaluate CODEX2 on whole-exome and targeted sequencing data, where biases are the
+    most prominent. CODEX2 outperforms existing methods and, in particular, significantly
+    improves sensitivity for common CNVs.
 License: GPL-2
-Depends: R (>= 3.2.3), Rsamtools, GenomeInfoDb, BSgenome.Hsapiens.UCSC.hg19, IRanges, Biostrings, S4Vectors
+Depends: R (>= 3.3.0), Rsamtools, GenomeInfoDb, BSgenome.Hsapiens.UCSC.hg19, IRanges, Biostrings, S4Vectors
 Suggests: WES.1KG.WUGSC
-biocViews: ExomeSeq, Normalization, QualityControl, CopyNumberVariation
 LazyData: yes
