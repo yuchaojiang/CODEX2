@@ -18,7 +18,7 @@ Pre-computed mappabilities. Method used is detailed in \code{\link{getmapp}}.
 \code{\link{getmapp}}
 }
 \author{
-Yuchao Jiang \email{yuchaoj@wharton.upenn.edu}
+Yuchao Jiang \email{yuchaoj@email.unc.edu}
 }
 \examples{
 # mappability of chromosome 1

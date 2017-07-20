@@ -55,7 +55,7 @@ adapted to different sequencing protocols.}
     \item{qcmat}{Matrix specifying results of exon-wise QC procedures}
 }
 \author{
-Yuchao Jiang \email{yuchaoj@wharton.upenn.edu}
+Yuchao Jiang \email{yuchaoj@email.unc.edu}
 }
 \seealso{
     \code{\link{getbambed}},

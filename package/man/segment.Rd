@@ -40,7 +40,7 @@ segment(Y_qc, Yhat, optK, K, sampname_qc, ref_qc, chr, lmax, mode)
     Final callset of CNVs with genotyping results.
 }
 \author{
-Yuchao Jiang \email{yuchaoj@wharton.upenn.edu}
+Yuchao Jiang \email{yuchaoj@email.unc.edu}
 }
 \seealso{
     \code{\link{normalize}},

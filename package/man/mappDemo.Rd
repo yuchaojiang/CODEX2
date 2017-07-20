@@ -15,7 +15,7 @@ mapp demo data (vector) pre-computed.
 Pre-computed using whole exome sequencing data of 46 HapMap samples.
 }
 \author{
-Yuchao Jiang \email{yuchaoj@wharton.upenn.edu}
+Yuchao Jiang \email{yuchaoj@email.unc.edu}
 }
 \examples{
 head(round(mappDemo, 2))

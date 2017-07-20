@@ -1,4 +1,10 @@
 export(segment, qc, normalize, getmapp, getcoverage, getbambed, choiceofK, 
     getgc, normalize2)
-import(Rsamtools, GenomeInfoDb, BSgenome.Hsapiens.UCSC.hg19, IRanges,
-    Biostrings, S4Vectors)
+import(Rsamtools, GenomeInfoDb, BSgenome.Hsapiens.UCSC.hg19, S4Vectors)
+importFrom("IRanges","IRanges", "RangesList", "Views", "countOverlaps")
+importFrom("grDevices", "dev.off", "pdf")
+importFrom("Biostrings","unmasked", "alphabetFrequency")
+importFrom("graphics", "par", "plot")
+importFrom("stats", "glm", "lm", "median", "poisson", "predict",
+           "quantile", "smooth.spline")
+importFrom("utils", "read.table")

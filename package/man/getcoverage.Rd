@@ -23,7 +23,7 @@ getcoverage(bambedObj, mapqthres)
     \item{readlength}{Vector of read length for each sample}
 }
 \author{
-Yuchao Jiang \email{yuchaoj@wharton.upenn.edu}
+Yuchao Jiang \email{yuchaoj@email.unc.edu}
 }
 \seealso{
     \code{\link{getbambed}}

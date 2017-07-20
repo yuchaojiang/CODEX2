@@ -43,7 +43,7 @@ Carey V (2013). "Software for Computing and Annotating Genomic Ranges." PLoS
 Computational Biology, 9.
 }
 \author{
-Yuchao Jiang \email{yuchaoj@wharton.upenn.edu}
+Yuchao Jiang \email{yuchaoj@email.unc.edu}
 }
 \seealso{
     \code{\link{getcoverage}}

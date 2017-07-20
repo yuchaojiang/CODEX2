@@ -27,7 +27,7 @@ information criterion, used for model selection; RSS: residue sum of squares,
 used to plot scree plot and determine the 'elbow'.
 }
 \author{
-Yuchao Jiang \email{yuchaoj@wharton.upenn.edu}
+Yuchao Jiang \email{yuchaoj@email.unc.edu}
 }
 \seealso{
 \code{\link{normalize}},

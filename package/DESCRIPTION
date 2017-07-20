@@ -1,6 +1,6 @@
 Package: CODEX2
 Type: Package
-Title: Full-spectrum copy number variation detection by high-throughput DNA sequencing
+Title: Full-Spectrum Copy Number Variation Detection by High-Throughput DNA Sequencing
 Version: 1.0.0
 Author: Yuchao Jiang, Nancy R. Zhang
 Maintainer: Yuchao Jiang <yuchaoj@email.unc.edu>
@@ -14,6 +14,8 @@ Description: High-throughput DNA sequencing enables detection of copy number var
     most prominent. CODEX2 outperforms existing methods and, in particular, significantly
     improves sensitivity for common CNVs.
 License: GPL-2
-Depends: R (>= 3.3.0), Rsamtools, GenomeInfoDb, BSgenome.Hsapiens.UCSC.hg19, IRanges, Biostrings, S4Vectors
+Depends: R (>= 3.4.0), Rsamtools, GenomeInfoDb, BSgenome.Hsapiens.UCSC.hg19, S4Vectors, 
+         IRanges, Biostrings
+Import: grDevices, graphics, stats, utils
 Suggests: WES.1KG.WUGSC
 LazyData: yes

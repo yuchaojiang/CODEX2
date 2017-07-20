@@ -18,7 +18,7 @@ Genomic positions for pre-computed mappabilities. Method used is detailed in
 \code{\link{getmapp}}.
 }
 \author{
-Yuchao Jiang \email{yuchaoj@wharton.upenn.edu}
+Yuchao Jiang \email{yuchaoj@email.unc.edu}
 }
 \seealso{
 \code{\link{getmapp}}

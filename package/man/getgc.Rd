@@ -24,7 +24,7 @@ Team TBD. BSgenome.Hsapiens.UCSC.hg19: Full genome sequences for Homo sapiens
 (UCSC version hg19). R package version 1.3.99.
 }
 \author{
-Yuchao Jiang \email{yuchaoj@wharton.upenn.edu}
+Yuchao Jiang \email{yuchaoj@email.unc.edu}
 }
 \seealso{
     \code{\link{getbambed}},

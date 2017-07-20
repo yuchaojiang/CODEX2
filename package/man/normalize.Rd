@@ -32,7 +32,7 @@ normalize(Y_qc, gc_qc, K)
     \item{K }{Number of latent Poisson factors}
 }
 \author{
-Yuchao Jiang \email{yuchaoj@wharton.upenn.edu}
+Yuchao Jiang \email{yuchaoj@email.unc.edu}
 }
 \seealso{
     \code{\link{qc}},

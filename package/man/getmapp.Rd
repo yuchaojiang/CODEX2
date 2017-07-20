@@ -28,7 +28,7 @@ generated and use this as the mappability of the exon.
 Vector of mappability for each exon.
 }
 \author{
-Yuchao Jiang \email{yuchaoj@wharton.upenn.edu}
+Yuchao Jiang \email{yuchaoj@email.unc.edu}
 }
 \seealso{
 \code{\link{getbambed}},
