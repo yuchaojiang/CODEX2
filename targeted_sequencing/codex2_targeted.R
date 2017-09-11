@@ -88,9 +88,8 @@ gc=gc.all
 mapp=mapp.all
 gene=gene.all
 
-qcObj=qc(Y,sampname,chr,ref,mapp,gc,cov_thresh=c(60,4000),length_thresh=c(20,2000),mapp_thresh=0.9,gc_thresh=c(20,80))
+qcObj=qc(Y,sampname,chr.all,ref,mapp,gc,cov_thresh=c(60,4000),length_thresh=c(20,2000),mapp_thresh=0.9,gc_thresh=c(20,80))
 Y_qc=qcObj$Y_qc; sampname_qc=qcObj$sampname_qc; gc_qc=qcObj$gc_qc; mapp_qc=qcObj$mapp_qc; ref_qc=qcObj$ref_qc ; qcmat=qcObj$qcmat
-qcmat[,1]=chr.all
 dim(Y_qc)
 length(gc_qc)
 length(mapp_qc)
