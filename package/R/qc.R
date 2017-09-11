@@ -8,8 +8,7 @@ qc <- function(Y, sampname, chr, ref, mapp, gc, cov_thresh, length_thresh,
     binfiltera <- (apply(Y_qc, 1, median) > cov_thresh[1]) & (apply(Y_qc, 
         1, median) < cov_thresh[2])
     message("Excluded ", sum(1 - binfiltera), " exons due to extreme coverage.")
-    binfilterb <- ((end(ref) - start(ref)) > length_thresh[1]) & ((end(ref) - 
-        start(ref)) < length_thresh[2])
+    binfilterb <- ((width(ref)) > length_thresh[1]) & ((width(ref)) < length_thresh[2])
     message("Excluded ", sum(1 - binfilterb), 
         " exons due to extreme exonic length.")
     binfilterc <- (mapp >= mapp_thresh)
@@ -22,7 +21,7 @@ qc <- function(Y, sampname, chr, ref, mapp, gc, cov_thresh, length_thresh,
     message("After taking union, excluded ", sum(1 - binfilter), " out of ", 
         length(binfilter), " exons in QC.")
     qcmat <- cbind(rep(chr, length(ref)), start(ref), end(ref), binfilter, 
-        apply(Y_qc, 1, median), binfiltera, (end(ref) - start(ref) + 1)/1000, 
+        apply(Y_qc, 1, median), binfiltera, width(ref)/1000, 
         binfilterb, mapp, binfilterc, round(gc, 2), binfilterd)
     colnames(qcmat) <- c("chr", "start_bp", "end_bp", "pass", "median_depth", 
         "pass_depth", "length_kb", "pass_length", "mapp", "pass_mapp", 
