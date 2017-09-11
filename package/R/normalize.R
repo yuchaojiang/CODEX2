@@ -64,8 +64,7 @@ normalize <- function(Y_qc, gc_qc, K) {
                   temp=try(glm(formula = Y_qc[s,] ~ hhat - 
                                  1, offset = L[s,], family = poisson)$coefficients,silent=TRUE)
                   if(is.character(temp)){
-                    temp=lm(log(pmax(Y_qc[s,],1)) ~ hhat - 
-                              1, offset = log(L[s,]))$coefficients
+                    temp=lm(log(pmax(Y_qc[s,],1)) ~ hhat - 1, offset = L[s,])$coefficients
                   }
                   ghat[s, ] = temp
                 }
