@@ -99,7 +99,7 @@ chr_qc=chr.all[which(as.logical(qcmat[,4])==TRUE)]
 length(gene_qc)
 length(sampname_qc)
 
-sampfilter=apply(Y_qc,2,median)>=50  # need to exclude 3 samples (exon capture failure)
+sampfilter=apply(Y_qc,2,median)>=50  # sometimes need to exclude samples with very few reads (due to capture failure)
 sampname_qc=sampname_qc[sampfilter]
 Y_qc=Y_qc[,sampfilter]
 rm(qcObj)
