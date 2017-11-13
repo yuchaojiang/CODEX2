@@ -30,12 +30,10 @@ If you've encountered problems or bugs running CODEX2, please report directly [h
 
 
 ## Citation
-Yuchao Jiang, Katherine L Nathanson, Nancy R Zhang, 2017. Full-spectrum copy number variation detection by high-throughput DNA sequencing. *Submitted*.
+Yuchao Jiang, Ioannis N. Anastopoulos, Katherine L. Nathanson, Nancy R. Zhang, 2017. Full-spectrum copy number variation detection by high-throughput DNA sequencing. *Submitted*. ([bioRxiv](https://www.biorxiv.org/content/early/2017/10/30/211698)).
 
 
 ## IMPORTANT: CODEX2 for cancer genomics
-When apply CODEX2 to whole-exome sequencing and targeted sequencing in cancer genomics:
-* In normalization step, use *normalize2(...)* function if there are normal samples and specify the index of the normal samples as a numerical vector in the *normal_index* argument;
 * In segmentation step, use **fractional** mode for somatic CNA detection (cancer is heterogenous) and **interger** mode for germline CNV detection (you will get CNV calls in your blood samples, which are germline).
 * For segmentation with paired tumor-normal experimental design, a modified CBS (circular binary segmentation) algorithm can be adopted, which ultilizes the pair information. Refer to the paired_tumor_normal_segmentation folder for code (not actively updated/maintained). Note that, from our experience, the default segmentation by CODEX2 (not using the pair information) does not make much difference. Normalization is the first order effect in WES study design.
 
