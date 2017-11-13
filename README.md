@@ -21,6 +21,7 @@ biocLite("WES.1KG.WUGSC")
 
 install.packages("devtools")
 library(devtools)
+install_github("yuchaojiang/CODEX/package")
 install_github("yuchaojiang/CODEX2/package")
 ```
 
