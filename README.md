@@ -38,7 +38,7 @@ Yuchao Jiang, Ioannis N. Anastopoulos, Katherine L. Nathanson, Nancy R. Zhang, 2
 The figure below illustrates the two experimental designs for which CODEX2 can be applied: (i) case-control design with a group of negative control samples, where the goal is to detect CNVs disproportionately present in the ‘cases’ versus the ‘controls’; and (ii) detection of all CNVs present in all samples design, such as in the Exome Aggregation Consortium. The key innovation in CODEX2 is the usage of *negative control genome regions* in a genome-wide latent factor model for sample- and position-specific background correction, and the utilization of *negative control samples*, under a case-control design, to further improve background bias estimation under this model. The negative control genome regions defined by CODEX2 are regions that do not harbor common CNVs, but that are still allowed to harbor rare CNVs, and can be constructed from existing studies or learned from data.
 
 <p align="center">
-  <img src='https://github.com/yuchaojiang/CODEX2/blob/master/demo/Figure1.png' width='450' height='350'>
+  <img src='https://github.com/yuchaojiang/CODEX2/blob/master/demo/Figure1.png' width='450' height='400'>
 </p>
 
 
