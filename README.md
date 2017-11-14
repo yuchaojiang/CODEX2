@@ -34,6 +34,12 @@ If you've encountered problems or bugs running CODEX2, please report directly [h
 Yuchao Jiang, Ioannis N. Anastopoulos, Katherine L. Nathanson, Nancy R. Zhang, 2017. Full-spectrum copy number variation detection by high-throughput DNA sequencing. *Submitted* ([bioRxiv](https://www.biorxiv.org/content/early/2017/10/30/211698)).
 
 
+## Demo code
+The figure below illustrates the two experimental designs for which CODEX2 can be applied: (i) case-control design with a group of negative control samples, where the goal is to detect CNVs disproportionately present in the ‘cases’ versus the ‘controls’; and (ii) detection of all CNVs present in all samples design, such as in the Exome Aggregation Consortium. The key innovation in CODEX2 is the usage of *negative control genome regions* in a genome-wide latent factor model for sample- and position-specific background correction, and the utilization of *negative control samples*, under a case-control design, to further improve background bias estimation under this model. The negative control genome regions defined by CODEX2 are regions that do not harbor common CNVs, but that are still allowed to harbor rare CNVs, and can be constructed from existing studies or learned from data.
+
+
+
+
 ## IMPORTANT: CODEX2 for cancer genomics
 * In segmentation step, use **fractional** mode for somatic CNA detection (cancer is heterogenous) and **interger** mode for germline CNV detection (you will get CNV calls in your blood samples, which are germline).
 * For segmentation with paired tumor-normal experimental design, a modified CBS (circular binary segmentation) algorithm can be adopted, which ultilizes the pair information. Refer to the paired_tumor_normal_segmentation folder for code (not actively updated/maintained). Note that, from our experience, the default segmentation by CODEX2 (not using the pair information) does not make much difference. Normalization is the first order effect in WES study design.
