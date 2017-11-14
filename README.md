@@ -41,7 +41,7 @@ The figure below illustrates the two experimental designs for which CODEX2 can b
   <img src='https://github.com/yuchaojiang/CODEX2/blob/master/demo/Figure1.png' width='440' height='400'>
 </p>
 
-
+Demo code and data for CODEX2 can be found [here](https://github.com/yuchaojiang/CODEX2/blob/master/demo/).
 
 ## IMPORTANT: CODEX2 for cancer genomics
 * In segmentation step, use **fractional** mode for somatic CNA detection (cancer is heterogenous) and **interger** mode for germline CNV detection (you will get CNV calls in your blood samples, which are germline).
