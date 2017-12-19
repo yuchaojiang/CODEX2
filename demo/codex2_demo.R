@@ -26,7 +26,7 @@ finalcall.codex2.ns <- segment(Y_qc, Yhat.ns, optK = which.max(BIC.ns),
                                ref_qc = IRanges(start=1:nrow(Y_qc)*100, end=1:nrow(Y_qc)*100+50),
                                chr = 18, lmax = 200, mode = "integer")
 nrow(finalcall.codex2.ns[finalcall.codex2.ns[,'st_exon']=='1580',])
-finalcall.codex2.ns[finalcall.codex2.ns[,'st_exon']=='1580',]
+head(finalcall.codex2.ns[finalcall.codex2.ns[,'st_exon']=='1580',])
 
 
 ###################################
@@ -61,4 +61,4 @@ finalcall.codex2.nr <- segment(Y_qc, Yhat.nr, optK = which.max(BIC.nr),
                                ref_qc = IRanges(start=1:nrow(Y_qc)*100, end=1:nrow(Y_qc)*100+50),
                                chr = 18, lmax = 200, mode = "integer")
 nrow(finalcall.codex2.nr[finalcall.codex2.nr[,'st_exon']=='1580',])
-finalcall.codex2.nr[finalcall.codex2.nr[,'st_exon']=='1580',]
+head(finalcall.codex2.nr[finalcall.codex2.nr[,'st_exon']=='1580',])
