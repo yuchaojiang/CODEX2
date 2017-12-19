@@ -37,9 +37,10 @@ The figure below illustrates the two experimental designs for which CODEX2 can b
   <img src='https://github.com/yuchaojiang/CODEX2/blob/master/demo/Figure1.png' width='440' height='400'>
 </p>
 
-**Demo code** for CODEX2 can be found [***here***](https://github.com/yuchaojiang/CODEX2/blob/master/demo/codex2_demo.R), with spike-in demo dataset pre-stored with CODEX2's R-pacakge.
+**R notebook** with step-by-step demonstration is available [***here as html***](http://htmlpreview.github.io/?https://github.com/yuchaojiang/CODEX2/blob/master/demo/CODEX2.html).
 
-**R notebook** with step-by-step demonstration is available as [***html***](http://htmlpreview.github.io/?https://github.com/yuchaojiang/CODEX2/blob/master/demo/CODEX2.html) and [***Rmd***](https://github.com/yuchaojiang/CODEX2/blob/master/demo/CODEX2.Rmd).
+**Demo code** for CODEX2 is available [***here as Rmd***](https://github.com/yuchaojiang/CODEX2/blob/master/demo/CODEX2.Rmd).
+
 
 **Update 12/19/2017**: We are still pushing constant updates to the package and are working on releasing the final version with vignettes. We will submit the package to CRAN/Bioconductor and update this page as soon as it is available .
 
