@@ -6,19 +6,15 @@
 # Negative control samples ...
 ###################################
 
-setwd("~/Dropbox/codex2_sim_new/package")
-library(CODEX)
-library(fields)
-source('normalize_null.R')
+library(CODEX2)
 
 # Y_qc and gc_qc can be obtained from the sequencing bam files using CODEX.
 # See https://github.com/yuchaojiang/CODEX for details/demo codes/vignettes.
-load('Y_qc_codex2.rda')
-load('gc_qc_codex2.rda')
+Y_qc = Y_qc_codex2
+gc_qc = gc_qc_codex2
 # For the case-control scenario, the normal sample index is known (samples without spike-in signals).
-load('norm_index_codex2.rda')
+norm_index = norm_index_codex2
 
-source('normalize_codex2_ns.R')
 normObj=normalize_codex2_ns(Y_qc = Y_qc, gc_qc = gc_qc, 
                             K = 1:3, norm_index = norm_index)
 Yhat.ns=normObj$Yhat; fGC.hat.ns=normObj$fGC.hat;
@@ -37,13 +33,10 @@ finalcall.codex2.ns[finalcall.codex2.ns[,'st_exon']=='1580',]
 # Negative control regions ...
 ###################################
 
-setwd("~/Dropbox/codex2_sim_new/package")
-library(CODEX)
-library(fields)
-source('normalize_null.R')
+library(CODEX2)
 
-load('Y_qc_codex2.rda')
-load('gc_qc_codex2.rda')
+Y_qc = Y_qc_codex2
+gc_qc = gc_qc_codex2
 
 # We can empirically identify common CNV regions by a first-pass CODEX run
 # For exons residing in common CNV regions, the s.d. of normalized z-scores across all samples
@@ -57,8 +50,6 @@ cnv_index1=which(apply(z.codex,1,sd)>=0.25)
 # e.g., from existing database (DGV or dbVar) or knowledge (tumor supressors or oncogenes).
 cnv_index2=1580:1620 
 
-source('em_autoK.R')
-source('normalize_codex2_nr.R')
 normObj=normalize_codex2_nr(Y_qc = Y_qc, gc_qc = gc_qc, 
                             K = 1:3, cnv_index = cnv_index1)
 Yhat.nr=normObj$Yhat; fGC.hat.nr=normObj$fGC.hat;
