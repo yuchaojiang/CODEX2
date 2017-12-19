@@ -148,6 +148,8 @@ finalcall.codex2.ns <- segment.recursive(Y_qc, Yhat.ns, optK = which.max(BIC.ns)
                                chr = 18, lmax = 200, mode = "integer")
 # For CODEX2 with negative control regions, simply change 'ns' to 'nr'.
 nrow(finalcall.codex2.ns[finalcall.codex2.ns[,'st_exon']=='1580',])
+nrow(finalcall.codex2.ns) # identified 4 additional CNVs (false positives)
+# this can be easily filtered out by a QC on the CNV lengths in kb or number of exons
 head(finalcall.codex2.ns[finalcall.codex2.ns[,'st_exon']=='1580',])
 
 # write.table(finalcall.codex2.ns, file = 'finalcall.codex2.ns.int.txt', 

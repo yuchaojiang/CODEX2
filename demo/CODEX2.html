@@ -288,7 +288,10 @@ AIC.nr=normObj$AIC; BIC.nr=normObj$BIC; RSS.nr=normObj$RSS</code></pre></div>
 <span class="co"># For CODEX2 with negative control regions, simply change 'ns' to 'nr'.</span>
 <span class="kw">nrow</span>(finalcall.codex2.ns[finalcall.codex2.ns[,<span class="st">'st_exon'</span>]==<span class="st">'1580'</span>,])</code></pre></div>
 <pre><code>## [1] 36</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(finalcall.codex2.ns[finalcall.codex2.ns[,<span class="st">'st_exon'</span>]==<span class="st">'1580'</span>,])</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nrow</span>(finalcall.codex2.ns) <span class="co"># identified 4 additional CNVs (false positives)</span></code></pre></div>
+<pre><code>## [1] 40</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># this can be easily filtered out by a QC on the CNV lengths in kb or number of exons</span>
+<span class="kw">head</span>(finalcall.codex2.ns[finalcall.codex2.ns[,<span class="st">'st_exon'</span>]==<span class="st">'1580'</span>,])</code></pre></div>
 <pre><code>##      sample_name chr cnv  st_bp  ed_bp length_kb st_exon ed_exon raw_cov
 ## cnv1     sample3  18 del 158000 162050     4.051    1580    1620    2063
 ## cnv2     sample4  18 del 158000 162050     4.051    1580    1620    1583
