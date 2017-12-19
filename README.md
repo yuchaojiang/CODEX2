@@ -37,7 +37,11 @@ The figure below illustrates the two experimental designs for which CODEX2 can b
   <img src='https://github.com/yuchaojiang/CODEX2/blob/master/demo/Figure1.png' width='440' height='400'>
 </p>
 
-**Demo code** for CODEX2 can be found [here](https://github.com/yuchaojiang/CODEX2/blob/master/demo/codex2_demo.R), with spike-in demo dataset pre-stored with CODEX2's R-pacakge. **Update 12/18/2017**: We are still pushing constant updates to the package and are working on releasing the final version with vignettes. We will submit the package to CRAN/Bioconductor and update this page as soon as it is available .
+**Demo code** for CODEX2 can be found [here](https://github.com/yuchaojiang/CODEX2/blob/master/demo/codex2_demo.R), with spike-in demo dataset pre-stored with CODEX2's R-pacakge.
+
+**R notebook** with step-by-step demonstration is available [here](http://htmlpreview.github.io/?https://github.com/yuchaojiang/CODEX2/demo/CODEX2.html).
+
+**Update 12/19/2017**: We are still pushing constant updates to the package and are working on releasing the final version with vignettes. We will submit the package to CRAN/Bioconductor and update this page as soon as it is available .
 
 ## IMPORTANT: CODEX2 for cancer genomics
 * In segmentation step, use **fractional** mode for somatic CNA detection (cancer is heterogenous) and **interger** mode for germline CNV detection (you will get CNV calls in your blood samples, which are germline).
