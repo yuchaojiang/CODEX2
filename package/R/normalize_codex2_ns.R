@@ -25,13 +25,13 @@ normalize_codex2_ns = function (Y_qc, gc_qc, K, norm_index)
     h.hat.codex2.null=normObj$h.hat[[1]]
     fGC.hat.codex2.null=normObj$fGC.hat[[1]]
     
-    beta.hat.codex2.ns=beta.hat.codex2.null[[1]]
-    g.hat.codex2.ns=g.hat.codex2.null[[1]]
+    beta.hat.codex2.ns=beta.hat.codex2.null
+    g.hat.codex2.ns=g.hat.codex2.null
     h.hat.codex2.ns=matrix(nrow=ncol(Y_qc),ncol=k)
-    h.hat.codex2.ns[norm_index,] =  h.hat.codex2.null[[1]]
+    h.hat.codex2.ns[norm_index,] =  h.hat.codex2.null
     
     fGC.hat.codex2.ns=matrix(ncol=ncol(Y_qc),nrow=nrow(Y_qc),data=NA)
-    fGC.hat.codex2.ns[,norm_index]=fGC.hat.codex2.null[[1]]
+    fGC.hat.codex2.ns[,norm_index]=fGC.hat.codex2.null
     
     message("\tRunning CODEX2 in case-control setting ...")
     
