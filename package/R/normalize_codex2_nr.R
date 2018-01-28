@@ -65,12 +65,18 @@ normalize_codex2_nr = function (Y_qc, gc_qc, K, cnv_index)
       for(emi in 1:nrow(EM.seed)){
         mu=EM.seed[emi,1]
         cnvfreq=EM.seed[emi,2]
-        
+        pi=cnvfreq
         diff=1
         numiters=1
         
-        beta0=0
-        g=rep(0,k)
+        offset.temp=log(Ntemp)+log(fGC)
+        glm.fit=glm(Ytemp~h,offset=offset.temp,family=poisson)
+        glm.coefficients=glm.fit$coefficients
+        beta0=glm.coefficients[1]
+        g=glm.coefficients[2:length(glm.coefficients)]
+        
+        #beta0=0
+        #g=rep(0,k)
         
         diff.final=mu.final=pi.final=beta0.final=rep(NA,500)
         g.final=matrix(ncol=k, nrow=500)
@@ -121,8 +127,16 @@ normalize_codex2_nr = function (Y_qc, gc_qc, K, cnv_index)
     diff=1
     numiters=1
     
-    beta0=0
-    g=rep(0,k)
+    pi=cnvfreq
+    
+    offset.temp=log(Ntemp)+log(fGC)
+    glm.fit=glm(Ytemp~h,offset=offset.temp,family=poisson)
+    glm.coefficients=glm.fit$coefficients
+    beta0=glm.coefficients[1]
+    g=glm.coefficients[2:length(glm.coefficients)]
+      
+    #beta0=0
+    #g=rep(0,k)
     
     diff.final=mu.final=pi.final=beta0.final=rep(NA,500)
     g.final=matrix(ncol=k,nrow=500)
