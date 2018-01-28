@@ -26,7 +26,7 @@ If you've encountered problems or bugs running CODEX2, please report directly [h
 
 
 ## Citation
-Yuchao Jiang, Ioannis N. Anastopoulos, Katherine L. Nathanson, Nancy R. Zhang, 2017. Full-spectrum copy number variation detection by high-throughput DNA sequencing. *Submitted* ([bioRxiv](https://www.biorxiv.org/content/early/2017/10/30/211698)).
+Yuchao Jiang, Ioannis N. Anastopoulos, Katherine L. Nathanson, Nancy R. Zhang, 2017. Full-spectrum copy number variation detection by high-throughput DNA sequencing. *Submitted* ([bioRxiv](https://www.biorxiv.org/content/early/2017/11/13/211698)).
 
 
 ## Running CODEX2
