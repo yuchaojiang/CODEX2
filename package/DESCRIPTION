@@ -1,7 +1,7 @@
 Package: CODEX2
 Type: Package
 Title: Full-Spectrum Copy Number Variation Detection by High-Throughput DNA Sequencing
-Version: 1.1.0
+Version: 1.2.0
 Author: Yuchao Jiang, Nancy R. Zhang
 Maintainer: Yuchao Jiang <yuchaoj@email.unc.edu>
 Description: High-throughput DNA sequencing enables detection of copy number variations

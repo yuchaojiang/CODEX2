@@ -1,5 +1,7 @@
 Package: CODEX2
 ===================
+01/28/2018 Fixed bugs. Added HMM for segmentation.
+
 12/18/2017 Updated with key functions and included vignettes.
 
 07/19/2017 Compiled package.

@@ -1,5 +1,5 @@
-\name{segment.recursive}
-\alias{segment.recursive}
+\name{segmentCBS}
+\alias{segmentCBS}
 \title{
 Recursive segmentation algorithm for CNV detection and genotyping
 }
@@ -8,7 +8,7 @@ Recursive segmentation algorithm for CNV detection and genotyping, using
 normalized read depth from whole exome sequencing. Updated from CODEX.
 }
 \usage{
-segment.recursive(Y_qc, Yhat, optK, K, sampname_qc, ref_qc, chr, lmax, mode)
+segmentCBS(Y_qc, Yhat, optK, K, sampname_qc, ref_qc, chr, lmax, mode)
 }
 \arguments{
     \item{Y_qc}{

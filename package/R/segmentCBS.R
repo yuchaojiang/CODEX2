@@ -1,4 +1,4 @@
-segment.recursive <- function(Y_qc, Yhat, optK, K, sampname_qc, ref_qc, chr, lmax, mode) {
+segmentCBS <- function(Y_qc, Yhat, optK, K, sampname_qc, ref_qc, chr, lmax, mode) {
     finalcall <- matrix(ncol = 9)
     lmax <- lmax - 1
     for (sampno in 1:ncol(Y_qc)) {
