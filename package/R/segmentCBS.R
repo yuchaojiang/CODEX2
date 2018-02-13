@@ -99,5 +99,15 @@ segmentCBS <- function(Y_qc, Yhat, optK, K, sampname_qc, ref_qc, chr, lmax, mode
     lratio=as.numeric(finalcall[,'lratio'])
     rownames(finalcall)=paste('cnv',1:nrow(finalcall),sep='')
     finalcall = as.data.frame(finalcall)
+    finalcall$copy_no=as.numeric(paste(finalcall$copy_no))
+    finalcall$length_kb=as.numeric(paste(finalcall$length_kb))
+    finalcall$raw_cov=as.numeric(paste(finalcall$raw_cov))
+    finalcall$norm_cov=as.numeric(paste(finalcall$norm_cov))
+    finalcall$st_bp=as.numeric(paste(finalcall$st_bp))
+    finalcall$ed_bp=as.numeric(paste(finalcall$ed_bp))
+    finalcall$st_exon=as.numeric(paste(finalcall$st_exon))
+    finalcall$ed_exon=as.numeric(paste(finalcall$ed_exon))
+    finalcall$lratio=as.numeric(paste(finalcall$lratio))
+    finalcall$mBIC=as.numeric(paste(finalcall$mBIC))
     finalcall
 }
