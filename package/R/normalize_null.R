@@ -19,7 +19,7 @@ normalize_null = function (Y_qc, gc_qc, K)
     maxiter <- 10
     maxhiter <- 50
     BHTHRESH <- 1e-04
-    HHTHRESH <- 1e-06
+    HHTHRESH <- 1e-05
     iter <- 1
     fhat <- matrix(nrow = nrow(Y_qc), ncol = ncol(Y_qc), 
                    data = 0)
