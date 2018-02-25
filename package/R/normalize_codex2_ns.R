@@ -42,7 +42,9 @@ normalize_codex2_ns = function (Y_qc, gc_qc, K, norm_index)
       while(diff > 0.0001){
         z=Y_qc[,j]/Nmat[,j]/beta.hat.codex2.ns/exp(g.hat.codex2.ns%*%as.matrix(hj.temp))
         spl <- smooth.spline(gc_qc, z)
+        
         fGC.temp <- predict(spl, gc_qc)$y
+        fGC.temp[fGC.temp<0] <- min(fGC.temp[fGC.temp>0])
         
         L <- log(Nmat[,j] * fGC.temp * beta.hat.codex2.ns)
         
