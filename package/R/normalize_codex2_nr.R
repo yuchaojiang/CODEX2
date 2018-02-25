@@ -33,7 +33,9 @@ normalize_codex2_nr = function (Y_qc, gc_qc, K, cnv_index)
     fGC.hat.codex2.nr=matrix(ncol=ncol(Y_qc),nrow=nrow(Y_qc))
     for(j in 1:ncol(fGC.hat.codex2.nr)){
       spl <- smooth.spline(gc_qc[-cnv_index], fGC.hat.codex2.null[,j])
-      fGC.hat.codex2.nr[,j] <- predict(spl, gc_qc)$y
+      fGC.pred=predict(spl, gc_qc)$y
+      fGC.pred[fGC.pred<0]=min(fGC.pred[fGC.pred>0])
+      fGC.hat.codex2.nr[, j] <- fGC.pred
     }
     
     g.hat.codex2.nr=matrix(nrow=nrow(Y_qc),ncol=k)
