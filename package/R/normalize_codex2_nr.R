@@ -108,7 +108,13 @@ normalize_codex2_nr=function (Y_qc, gc_qc, K, cnv_index)
         EM.seed[emi, 4] = pi
         EM.seed[emi, 5] = mu
       }
-      EM.seed=EM.seed[EM.seed[,4]<0.5,]
+            
+      if(all(EM.seed[,4]> 0.45 | EM.seed[,4] < 0.55)){
+        EM.seed=EM.seed[EM.seed[,1]<0,]
+      } else{
+        EM.seed = EM.seed[EM.seed[, 4] <= 0.5, ]
+      }
+      
       best.seed = which.max(EM.seed[, 3])
       cnvfreq = EM.seed[best.seed, 2]
       mu = EM.seed[best.seed, 1]
