@@ -109,7 +109,7 @@ normalize_codex2_nr=function (Y_qc, gc_qc, K, cnv_index)
         EM.seed[emi, 5] = mu
       }
             
-      if(all(EM.seed[,4]> 0.45 | EM.seed[,4] < 0.55)){
+      if(all(EM.seed[,4]> 0.45 & EM.seed[,4] < 0.55)){
         EM.seed=EM.seed[EM.seed[,1]<0,]
       } else{
         EM.seed = EM.seed[EM.seed[, 4] <= 0.5, ]
