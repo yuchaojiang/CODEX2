@@ -40,8 +40,6 @@ The figure below illustrates the two experimental designs for which CODEX2 can b
 **Demo code** for CODEX2 is available [***here as Rmd***](https://github.com/yuchaojiang/CODEX2/blob/master/demo/CODEX2.Rmd).
 
 
-**Update 12/19/2017**: We are still pushing constant updates to the package and are working on releasing the final version with vignettes. We will submit the package to CRAN/Bioconductor and update this page as soon as it is available .
-
 ## IMPORTANT: CODEX2 for cancer genomics
 * In segmentation step, use **fractional** mode for somatic CNA detection (cancer is heterogenous) and **interger** mode for germline CNV detection (you will get CNV calls in your blood samples, which are germline).
 * For segmentation with paired tumor-normal experimental design, a modified CBS (circular binary segmentation) algorithm can be adopted, which ultilizes the pair information. Refer to the paired_tumor_normal_segmentation folder for code (not actively updated/maintained). Note that, from our experience, the default segmentation by CODEX2 (not using the pair information) does not make much difference. Normalization is the first order effect in WES study design.
