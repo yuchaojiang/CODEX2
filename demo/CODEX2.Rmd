@@ -27,11 +27,9 @@ knitr::include_graphics("https://raw.githubusercontent.com/yuchaojiang/CODEX2/ma
 
 ```{r eval = FALSE}
 source("https://bioconductor.org/biocLite.R")
-biocLite(c("CODEX","WES.1KG.WUGSC"))
+biocLite("WES.1KG.WUGSC")
 
-install.packages("devtools")
-library(devtools)
-install_github("yuchaojiang/CODEX2/package")
+devtools::install_github("yuchaojiang/CODEX2/package")
 ```
 
 
@@ -40,121 +38,205 @@ install_github("yuchaojiang/CODEX2/package")
 ## Pre-processing
 
 This step is to get directories of .bam files, read in exon target positions from .bed files, and get sample names. The direct input of CODEX2 include: *bamdir*, which is a vector indicating the directories of all .bam files; *sampname*, which is a column vector with row entries of sample names; *bedFile*, which indicates the directory of the .bed file (WES bait file, no header, sorted by start and end positions); and *chr*, which specifies the chromosome. CODEX2 processes the entire genome chromosome by chromosome; make sure  the chromosome formats are consistent between the .bed and the .bam files.
+
 ```{r, message=FALSE}
 library(CODEX2)
 library(WES.1KG.WUGSC) # Load Toy data from the 1000 Genomes Project.
 dirPath <- system.file("extdata", package = "WES.1KG.WUGSC")
 bamFile <- list.files(dirPath, pattern = '*.bam$')
 bamdir <- file.path(dirPath, bamFile)
-sampname <- as.matrix(read.table(file.path(dirPath, "sampname")))
+sampname <- substr(bamFile,1,7)
 bedFile <- file.path(dirPath, "chr22_400_to_500.bed")
-chr <- 22
 bambedObj <- getbambed(bamdir = bamdir, bedFile = bedFile, 
-                       sampname = sampname, projectname = "CODEX_demo", chr)
+                       sampname = sampname, projectname = "CODEX2_demo")
 bamdir <- bambedObj$bamdir; sampname <- bambedObj$sampname
-ref <- bambedObj$ref; projectname <- bambedObj$projectname; chr <- bambedObj$chr
+ref <- bambedObj$ref; projectname <- bambedObj$projectname
 ```
 
-## Getting raw read depth, GC content and mappability
+## Getting GC content and mappability
 
-Read depth matrix, as well as read lengths across all samples, will be returned.
+Obtain GC contents for each exon/target/window.
 ```{r, message=FALSE}
-coverageObj <- getcoverage(bambedObj, mapqthres = 20)
-Y <- coverageObj$Y; readlength <- coverageObj$readlength
-gc <- getgc(chr, ref)
-mapp <- getmapp(chr, ref)
+gc <- getgc(ref)
+mapp <- getmapp(ref)
+values(ref) <- cbind(values(ref), DataFrame(gc, mapp))  
+```
+
+
+
+## Getting raw read depth
+
+Read depth matrix, as well as read lengths across all samples, will be returned. This will need to be generated for each chromosome.
+```{r, message=FALSE}
+coverageObj <- getcoverage(bambedObj, mapqthres = 20, chr = 22)
+Y <- coverageObj$Y
+write.csv(Y, file = paste(projectname, '_coverage_', chr = 22, '.csv', sep=''), quote = FALSE)
+head(Y[,1:5])
 ```
 
 ## Quality control
-Take a sample-wise and exon-wise quality control procedure on 
-the depth of coverage matrix.
-```{r}
-qcObj <- qc(Y, sampname, chr, ref, mapp, gc, cov_thresh = c(20, 4000), 
-    length_thresh = c(20, 2000), mapp_thresh = 0.9, gc_thresh = c(20, 80))
-Y_qc <- qcObj$Y_qc; sampname_qc <- qcObj$sampname_qc; gc_qc <- qcObj$gc_qc
-mapp_qc <- qcObj$mapp_qc; ref_qc <- qcObj$ref_qc; qcmat <- qcObj$qcmat
-#write.table(qcmat, file = paste(projectname, '_', chr, '_qcmat', '.txt', sep=''),
-#            sep='\t', quote=FALSE, row.names=FALSE)
+
+First, read in genome-wide data.
+
+```{r, message= F}
+Y.all <- matrix(nrow=length(ref), ncol=length(sampname))
+colnames(Y.all) <- sampname
+rownames(Y.all) <- paste(seqnames(ref),':',start(ref),'-',end(ref),sep='')
+for(chr in unique(seqnames(ref))){
+  message(chr)
+  chr.index <- which(seqnames(ref)==chr)
+  Y.chr <- read.csv(paste(projectname, '_coverage_', chr, '.csv', sep=''),
+                    row.names = 1)
+  Y.all[chr.index,] <- as.matrix(Y.chr)
+}
 ```
 
+Then, take a sample-wise and exon-wise quality control procedure on 
+the depth of coverage matrix.
+```{r, message = FALSE}
+qcObj <- qc(Y.all, sampname, ref, cov_thresh = c(20, 4000),
+            length_thresh = c(20, 2000), mapp_thresh = 0.9,
+            gc_thresh = c(20, 80))
+Y.all_qc <- qcObj$Y_qc; sampname_qc <- qcObj$sampname_qc
+ref_qc <- qcObj$ref_qc; qcmat <- qcObj$qcmat; gc_qc <- ref_qc$gc
+write.table(qcmat, file = paste(projectname, '_', chr, '_qcmat', '.txt', sep=''),
+            sep = '\t', quote = FALSE, row.names = FALSE)
+```
 
 # Running CODEX2
 
 For demonstration purpose, we in silico spiked in CNVs spanning exon 1580 - 1620 with a population frequency 40%. There are altogether 90 samples, 36 of which have the heterozygous deletion. The toy dataset is stored as part of the CODEX2 R-package.
 
-## Running CODEX2 with negative control samples
-
-Y_qc and gc_qc can be obtained from the sequencing bam files using the code in the previous section. For the case-control scenario, the normal sample index is known (samples without spike-in signals).
-
-```{r, message=FALSE}
-# Below are pre-computed demo dataset, stored as part of the CODEX2 R-package.
-Y_qc = Y_qc_codex2
-gc_qc = gc_qc_codex2
-norm_index = norm_index_codex2
-
-normObj=normalize_codex2_ns(Y_qc = Y_qc, gc_qc = gc_qc, 
-                            K = 1:6, norm_index = norm_index)
-Yhat.ns=normObj$Yhat; fGC.hat.ns=normObj$fGC.hat;
-beta.hat.ns=normObj$beta.hat; g.hat.ns=normObj$g.hat; h.hat.ns=normObj$h.hat
-AIC.ns=normObj$AIC; BIC.ns=normObj$BIC; RSS.ns=normObj$RSS
+```{r}
+# Load pre-stored data.
+Y.all_qc <- Y_qc_demo
+ref_qc <- ref_qc_demo
+gc_qc <- ref_qc$gc
 ```
 
+Estimate library size factor based on genome-wide read depth after QC. It is important, especially in cancer genomics, to calculate library size factor using genome-wide data, as chromosomal read depth can be attentuated by large copy number aberrations.
 
-Choose the number of latent Poisson factors. Use BIC as the model selection metric by default.
+```{r, message=FALSE}
+Y.nonzero <- Y.all_qc[apply(Y.all_qc, 1, function(x){!any(x==0)}),]
+pseudo.sample <- apply(Y.nonzero,1,function(x){prod(x)^(1/length(x))})
+N <- apply(apply(Y.nonzero, 2, function(x){x/pseudo.sample}), 2, median)
+```
+
+## Running CODEX2 without specifying negative control samples/regions
+
+Y_qc and gc_qc can be obtained from the sequencing bam files using the code in the previous section.
+
+```{r, message=FALSE}
+chr <- 20 # This can be run for one chromosome or multiple chromosomes
+chr.index <- which(seqnames(ref_qc)==chr)
+normObj.null <- normalize_null(Y_qc = Y.all_qc[chr.index,],
+                               gc_qc = gc_qc[chr.index],
+                               K = 1:5, N = N)
+Yhat.null <- normObj.null$Yhat
+AIC.null <- normObj.null$AIC; BIC.null <- normObj.null$BIC
+RSS.null <- normObj.null$RSS
+```
+
+Choose the number of latent Poisson factors. BIC is used as the model selection metric by default.
 
 ```{r, eval=FALSE}
-choiceofK(AIC.ns, BIC.ns, RSS.ns, K = 1:6 , filename = "codex2_ns_choiceofK.pdf")
+choiceofK(AIC.null, BIC.null, RSS.null, K = 1:5 , filename = "codex2_null_choiceofK.pdf")
 ```
 
 
 ```{r, echo=FALSE, fig1, fig.height = 2.5, fig.width = 6, fig.align = "center"}
 par(mfrow = c(1, 3))
-plot(1:6, RSS.ns, type = "b", xlab = "Number of latent variables", pch=20)
-plot(1:6, AIC.ns, type = "b", xlab = "Number of latent variables", pch=20)
-plot(1:6, BIC.ns, type = "b", xlab = "Number of latent variables", pch=20)
+plot(1:5, RSS.null, type = "b", xlab = "Number of latent variables", pch=20)
+plot(1:5, AIC.null, type = "b", xlab = "Number of latent variables", pch=20)
+plot(1:5, BIC.null, type = "b", xlab = "Number of latent variables", pch=20)
+par(mfrow = c(1,1))
+```
+
+
+## Running CODEX2 with negative control samples
+
+For the case-control scenario, the normal sample index is known (samples without spike-in signals).
+
+```{r, message=FALSE}
+# Below are pre-computed demo dataset, stored as part of the CODEX2 R-package.
+normObj <- normalize_codex2_ns(Y_qc = Y.all_qc[chr.index,],
+                               gc_qc = gc_qc[chr.index], 
+                               K = 1:5, norm_index = norm_index_demo,
+                               N = N)
+Yhat.ns <- normObj$Yhat; fGC.hat.ns <- normObj$fGC.hat;
+beta.hat.ns <- normObj$beta.hat; g.hat.ns <- normObj$g.hat; h.hat.ns <- normObj$h.hat
+AIC.ns <- normObj$AIC; BIC.ns <- normObj$BIC; RSS.ns <- normObj$RSS
+```
+
+
+Choose the number of latent Poisson factors. BIC is used as the model selection metric by default.
+
+```{r, eval=FALSE}
+choiceofK(AIC.ns, BIC.ns, RSS.ns, K = 1:5 , filename = "codex2_ns_choiceofK.pdf")
+```
+
+
+```{r, echo=FALSE, fig2, fig.height = 2.5, fig.width = 6, fig.align = "center"}
+par(mfrow = c(1, 3))
+plot(1:5, RSS.ns, type = "b", xlab = "Number of latent variables", pch=20)
+plot(1:5, AIC.ns, type = "b", xlab = "Number of latent variables", pch=20)
+plot(1:5, BIC.ns, type = "b", xlab = "Number of latent variables", pch=20)
 par(mfrow = c(1,1))
 ```
 
 
 ## Running CODEX2 with negative control regions
 
-We can empirically identify common CNV regions by a first-pass CODEX run: For exons residing in common CNV regions, the s.d. of normalized z-scores across all samples will be large.
+We can empirically identify common CNV regions by a first-pass CODEX run: For exons residing in common CNV regions, the s.d. of normalized z-scores across all samples will be large. This can also be provided by the user as known, e.g., from existing database (DGV or dbVar) or knowledge (tumor supressors or oncogenes with recurrent CNA changes).
 
 ```{r, message= FALSE, eval=FALSE}
 # Empirically identify common CNV regions from the data.
-normObj=normalize_null(Y_qc = Y_qc, gc_qc = gc_qc, K = 1:6)
-z.codex = log(Y_qc/normObj$Yhat[[which.max(normObj$BIC)]])
-plot(1:nrow(z.codex), apply(z.codex,1,sd))
-which(apply(z.codex,1,sd)>=0.25) 
-cnv_index1 = which(apply(z.codex,1,sd)>=0.25) 
-# This can also be provided by the user as known,
-# e.g., from existing database (DGV or dbVar) or knowledge (tumor supressors or oncogenes).
-cnv_index2 = 1580:1620
-head(cnv_index1 == cnv_index2)
+z.codex2 <- log(Y.all_qc[chr.index,]/normObj.null$Yhat[[which.max(normObj.null$BIC)]])
+plot(1:nrow(z.codex2), apply(z.codex2, 1, sd))
+which(apply(z.codex2,1,sd)>=0.25) 
+cnv_index1 <- which(apply(z.codex2,1,sd)>=0.25) 
+# User-provided indices for common CNVs.
+cnv_index2 <- 1580:1620
+all(cnv_index1 == cnv_index2)
 
-normObj=normalize_codex2_nr(Y_qc = Y_qc, gc_qc = gc_qc, 
-                            K = 1:6, cnv_index = cnv_index1)
-Yhat.nr=normObj$Yhat; fGC.hat.nr=normObj$fGC.hat;
-beta.hat.nr=normObj$beta.hat; g.hat.nr=normObj$g.hat; h.hat.nr=normObj$h.hat
-AIC.nr=normObj$AIC; BIC.nr=normObj$BIC; RSS.nr=normObj$RSS
+normObj <- normalize_codex2_nr(Y_qc = Y.all_qc[chr.index,], gc_qc = gc_qc[chr.index], 
+                              K = 1:5, cnv_index = cnv_index2,
+                              N = N)
+Yhat.nr <- normObj$Yhat; fGC.hat.nr <- normObj$fGC.hat;
+beta.hat.nr <- normObj$beta.hat; g.hat.nr <- normObj$g.hat; h.hat.nr <- normObj$h.hat
+AIC.nr <- normObj$AIC; BIC.nr <- normObj$BIC; RSS.nr <- normObj$RSS
 ```
 
 
-# Running Poisson-likelihood recursive segmentation by CODEX2
+# Running segmentation by CODEX2
+
+We offer two versions of segmentation procedures: poisson-likelihood based recursive segmentation (recommended) and hidden Markov model (not recommended). For CODEX2 with negative control regions, simply change Yhat.ns to Yhat.nr in the code below.
+
 ```{r, message=FALSE}
-finalcall.codex2.ns <- segment.recursive(Y_qc, Yhat.ns, optK = which.max(BIC.ns),
-                               K = 1:6, sampname_qc = paste('sample',1:ncol(Y_qc),sep=''),
-                               ref_qc = IRanges(start=1:nrow(Y_qc)*100, end=1:nrow(Y_qc)*100+50),
-                               chr = 18, lmax = 200, mode = "integer")
-# For CODEX2 with negative control regions, simply change 'ns' to 'nr'.
-nrow(finalcall.codex2.ns[finalcall.codex2.ns[,'st_exon']=='1580',])
-nrow(finalcall.codex2.ns) # identified 4 additional CNVs (false positives)
-# this can be easily filtered out by a QC on the CNV lengths in kb or number of exons
-head(finalcall.codex2.ns[finalcall.codex2.ns[,'st_exon']=='1580',])
+finalcall.CBS <- segmentCBS(Y.all_qc[chr.index,],  # recommended
+                            Yhat.ns, optK = which.max(BIC.ns),
+                            K = 1:5,
+                            sampname_qc = paste('sample',1:ncol(Y.all_qc),sep=''),
+                            ref_qc = ranges(ref_qc)[chr.index],
+                            chr = chr, lmax = 400, mode = "integer")
 
-# write.table(finalcall.codex2.ns, file = 'finalcall.codex2.ns.int.txt', 
-#             sep='\t', quote=FALSE, row.names=FALSE)
+finalcall.HMM <- segmentHMM(Y.all_qc[chr.index,],  # not recommended
+                            Yhat.ns, optK = which.max(BIC.ns),
+                            K = 1:5,
+                            sampname_qc = paste('sample',1:ncol(Y.all_qc),sep=''),
+                            ref_qc = ranges(ref_qc)[chr.index],
+                            chr = chr, mode = "integer")
 ```
 
+Post-segmentation pruning and filtering are recommended based on CNV length (filter1), length per exon (filter2), likelihood ratio (filter3), and number of exons (filter4).
 
+```{r, message = FALSE}
+filter1 <- finalcall.CBS$length_kb<=200
+filter2 <- finalcall.CBS$length_kb/(finalcall.CBS$ed_exon-finalcall.CBS$st_exon+1)<50
+finalcall.CBS.filter <- finalcall.CBS[filter1 & filter2, ]
+
+filter3 <- finalcall.CBS.filter$lratio>40
+filter4 <- (finalcall.CBS.filter$ed_exon-finalcall.CBS.filter$st_exon)>1
+finalcall.CBS.filter=finalcall.CBS.filter[filter3|filter4,]
+```
 
