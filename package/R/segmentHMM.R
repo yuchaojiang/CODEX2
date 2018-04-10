@@ -149,8 +149,8 @@ segmentHMM = function( Y_qc, Yhat, optK, K, sampname_qc, ref_qc, chr, mode){
     
     k=k+1
   }
-  
   finalcall = do.call("rbind", finalcalls)
   if( mode == 'integer') finalcall = finalcall[finalcall$copy_no!=2,]
+  rownames(finalcall) = paste("cnv", 1:nrow(finalcall), sep = "")
   finalcall
 }
