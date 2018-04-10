@@ -1,8 +1,9 @@
-normalize_codex2_nr=function (Y_qc, gc_qc, K, cnv_index) 
+normalize_codex2_nr=function (Y_qc, gc_qc, K, cnv_index, N) 
 {
   if (max(K) > ncol(Y_qc)) 
     stop("Number of latent Poisson factors K cannot exceed the number of \n         samples!")
-  N <- colSums(Y_qc)
+  Ntotal <- N
+  N <- round(N/median(N)*median(colSums(Y_qc)))
   Nmat <- matrix(nrow = nrow(Y_qc), ncol = ncol(Y_qc), data = N, 
                  byrow = TRUE)
   Yhat <- list(length = length(K))
@@ -15,22 +16,19 @@ normalize_codex2_nr=function (Y_qc, gc_qc, K, cnv_index)
   RSS <- rep(NA, length = length(K))
   for (ki in 1:length(K)) {
     k <- K[ki]
-    message("Computing normalization with k = ", k, " latent factors ...", 
-            sep = "")
-    message("\tRunning CODEX in regions without common CNVs ...")
+    message("Running CODEX in regions without common CNVs ...\n")
     normObj = normalize_null(Y_qc[-cnv_index, ], gc_qc[-cnv_index], 
-                             K = k)
+                             K = k, N=Ntotal)
     Yhat.codex2.null = normObj$Yhat[[1]]
     beta.hat.codex2.null = normObj$beta.hat[[1]]
     g.hat.codex2.null = normObj$g.hat[[1]]
     h.hat.codex2.null = normObj$h.hat[[1]]
     fGC.hat.codex2.null = normObj$fGC.hat[[1]]
-    message("\tRunning CODEX2 in regions with common CNVs ...")
+    message("\nRunning CODEX2 in regions with common CNVs ...\n")
     h.hat.codex2.nr = h.hat.codex2.null
     fGC.hat.codex2.nr = matrix(ncol = ncol(Y_qc), nrow = nrow(Y_qc))
     for (j in 1:ncol(fGC.hat.codex2.nr)) {
-      spl <- smooth.spline(gc_qc[-cnv_index], fGC.hat.codex2.null[, 
-                                                                  j])
+      spl <- smooth.spline(gc_qc[-cnv_index], fGC.hat.codex2.null[,j])
       fGC.pred = predict(spl, gc_qc)$y
       fGC.pred[fGC.pred < 0] = min(fGC.pred[fGC.pred > 
                                               0])
@@ -45,7 +43,7 @@ normalize_codex2_nr=function (Y_qc, gc_qc, K, cnv_index)
       Ytemp = Y_qc[cnvi, ]
       h = h.hat.codex2.nr
       offset.temp = log(N) + log(fGC)
-      h = h[Ytemp > 5, , drop = F]
+      h = h[Ytemp > 5, , drop = FALSE]
       fGC = fGC[Ytemp > 5]
       offset.temp = offset.temp[Ytemp > 5]
       Ntemp = N[Ytemp > 5]
@@ -108,11 +106,11 @@ normalize_codex2_nr=function (Y_qc, gc_qc, K, cnv_index)
         EM.seed[emi, 4] = pi
         EM.seed[emi, 5] = mu
       }
-            
-      if(all(EM.seed[,4]> 0.45 & EM.seed[,4] < 0.55)){
+      
+      if(all(EM.seed[,4]> 0.4 & EM.seed[,4] < 0.6)){
         EM.seed=EM.seed[EM.seed[,1]<0,]
       } else{
-        EM.seed = EM.seed[EM.seed[, 4] <= 0.5, ]
+        EM.seed = EM.seed[EM.seed[, 4] <= 0.4, ]
       }
       
       best.seed = which.max(EM.seed[, 3])

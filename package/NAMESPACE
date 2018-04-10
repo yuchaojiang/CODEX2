@@ -1,10 +1,14 @@
 export(Estep, Mstep, normalize_codex2_nr, normalize_codex2_ns, normalize_null,
-       segmentCBS)
-import(Rsamtools, GenomeInfoDb, BSgenome.Hsapiens.UCSC.hg19, S4Vectors, CODEX)
-importFrom("IRanges","IRanges", "RangesList", "Views", "countOverlaps")
+       normalize, segmentCBS, segmentHMM, getgc, getmapp, getbambed,
+       getcoverage, qc, choiceofK)
+import(Rsamtools, GenomicRanges, BSgenome.Hsapiens.UCSC.hg19, S4Vectors)
+importFrom("GenomicRanges", "GRanges")
+importFrom("GenomeInfoDb", "mapSeqlevels")
+importFrom("IRanges", "IRanges", "RangesList", "Views", "countOverlaps")
 importFrom("grDevices", "dev.off", "pdf")
 importFrom("Biostrings","unmasked", "alphabetFrequency")
 importFrom("graphics", "par", "plot")
 importFrom("stats", "glm", "lm", "median", "poisson", "predict",
            "quantile", "smooth.spline", "dpois")
 importFrom("utils", "read.table")
+importFrom("stats", "dnorm")

@@ -1,7 +1,7 @@
-\name{normalize_null}
-\alias{normalize_null}
+\name{normalize}
+\alias{normalize}
 \title{
-Normalization of read depth from whole exome sequencing
+Normalization of read depth
 }
 \description{
 Fits a Poisson log-linear model that normalizes the read depth data from whole 
@@ -10,7 +10,7 @@ content, exon capture and amplification efficiency, and latent systemic
 artifacts.
 }
 \usage{
-normalize_null(Y_qc, gc_qc, K, N)
+normalize(Y_qc, gc_qc, K, N, message)
 }
 \arguments{
     \item{Y_qc}{
@@ -24,8 +24,9 @@ normalize_null(Y_qc, gc_qc, K, N)
     been chosen or a vector of integers so that AIC, BIC, and RSS are computed
     for choice of optimal k.}
     \item{N}{
-    Library size factor, which is computed from the genome-wide read depth data.
-    }
+    Library size factor, which is computed from the genome-wide read depth data.}
+    \item{message}{
+    Whether display message from normalization. Default to be TRUE.}
 }
 \value{
     \item{Yhat }{Normalized read depth matrix}
@@ -41,12 +42,19 @@ normalize_null(Y_qc, gc_qc, K, N)
 \author{
 Yuchao Jiang \email{yuchaoj@email.unc.edu}
 }
+\seealso{
+    \code{\link{qc}},
+    \code{\link{choiceofK}}
+}
 \examples{
 Y_qc <- Y_qc_demo
 gc_qc <- ref_qc_demo$gc
 Y.nonzero=Y_qc[apply(Y_qc,1,function(x){!any(x==0)}),]
 pseudo = apply(Y.nonzero,1,function(x){prod(x)^(1/length(x))})
 N=apply(apply(Y.nonzero,2,function(x){x/pseudo}),2,median)
-normObj <- normalize_null(Y_qc, gc_qc, K = 2, N = N)
+normObj <- normalize(Y_qc, gc_qc, K = 1:2, N = N)
+Yhat <- normObj$Yhat
+AIC <- normObj$AIC; BIC <- normObj$BIC; RSS <- normObj$RSS
+K <- normObj$K
 }
 \keyword{ package }

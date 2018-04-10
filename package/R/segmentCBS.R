@@ -1,5 +1,4 @@
-segmentCBS=function (Y_qc, Yhat, optK, K, sampname_qc, ref_qc, chr, lmax, 
-          mode) 
+segmentCBS=function (Y_qc, Yhat, optK, K, sampname_qc, ref_qc, chr, lmax, mode) 
 {
   finalcall <- matrix(ncol = 9)
   lmax <- lmax - 1
@@ -29,8 +28,7 @@ segmentCBS=function (Y_qc, Yhat, optK, K, sampname_qc, ref_qc, chr, lmax,
     lambda[lambda < 20] <- 20
     if (mode == "integer") {
       chat <- round(2 * (yact/lambda))
-    }
-    else if (mode == "fraction") {
+    } else if (mode == "fraction") {
       chat <- 2 * (yact/lambda)
     }
     lratio <- (1 - chat/2) * lambda + log((chat + 1e-04)/2.0001) * 

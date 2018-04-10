@@ -1,5 +1,7 @@
 Package: CODEX2
 ===================
+04/08/2018 Fixed bugs. Changed IRanges object to GRange object. Updated parameter estimation for normalization.
+
 01/28/2018 Fixed bugs. Added HMM for segmentation.
 
 12/18/2017 Updated with key functions and included vignettes.

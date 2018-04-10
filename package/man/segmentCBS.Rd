@@ -42,16 +42,13 @@ segmentCBS(Y_qc, Yhat, optK, K, sampname_qc, ref_qc, chr, lmax, mode)
 Yuchao Jiang \email{yuchaoj@email.unc.edu}
 }
 \examples{
-library(CODEX2)
-Y_qc <- qcObjDemo$Y_qc
-Yhat <- normObjDemo$Yhat
-BIC <- normObjDemo$BIC
-K <- normObjDemo$K
-sampname_qc <- qcObjDemo$sampname_qc
-ref_qc <- qcObjDemo$ref_qc
-chr <- bambedObjDemo$chr
-finalcall <- segment(Y_qc, Yhat, optK = K[which.max(BIC)], K = K, sampname_qc,
-    ref_qc, chr, lmax = 200, mode = "integer")
-finalcall
+Y_qc <- Y_qc_demo
+Yhat <- normObj_demo$Yhat
+BIC <- normObj_demo$BIC
+K <- normObj_demo$K
+sampname_qc <- paste('sample',1:ncol(Y_qc), sep='')
+ref_qc <- ref_qc_demo
+finalcall <- segmentCBS(Y_qc, Yhat, optK = K[which.max(BIC)], K = K, sampname_qc,
+    ranges(ref_qc), chr = 20, lmax = 200, mode = "integer")
 }
 \keyword{ package }

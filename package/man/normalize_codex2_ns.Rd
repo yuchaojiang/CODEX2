@@ -14,7 +14,7 @@ cohort, and then computes the sample-wise latent factor terms for the case
 samples by regression.
 }
 \usage{
-normalize_codex2_ns(Y_qc, gc_qc, K, norm_index)
+normalize_codex2_ns(Y_qc, gc_qc, K, norm_index, N)
 }
 \arguments{
     \item{Y_qc}{
@@ -29,6 +29,8 @@ normalize_codex2_ns(Y_qc, gc_qc, K, norm_index)
     for choice of optimal k.}
     \item{norm_index}{
     Indices of control samples.}
+    \item{N}{
+    Library size factor, which is computed from the genome-wide read depth data.}
 }
 \value{
     \item{Yhat }{Normalized read depth matrix}
@@ -45,7 +47,13 @@ normalize_codex2_ns(Y_qc, gc_qc, K, norm_index)
 Yuchao Jiang \email{yuchaoj@email.unc.edu}
 }
 \examples{
-normObj <- normalize_codex2_ns(Y_qc_codex2, gc_qc_codex2, K = 1,
-                               norm_index = norm_index_codex2)
+Y_qc <- Y_qc_demo
+gc_qc <- ref_qc_demo$gc
+Y.nonzero=Y_qc[apply(Y_qc,1,function(x){!any(x==0)}),]
+pseudo = apply(Y.nonzero,1,function(x){prod(x)^(1/length(x))})
+N=apply(apply(Y.nonzero,2,function(x){x/pseudo}),2,median)
+normObj <- normalize_codex2_ns(Y_qc, gc_qc, K = 2,
+                               norm_index = norm_index_demo,
+                               N = N)
 }
 \keyword{ package }

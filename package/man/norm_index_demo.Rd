@@ -1,5 +1,5 @@
-\name{norm_index_codex2}
-\alias{norm_index_codex2}
+\name{norm_index_demo}
+\alias{norm_index_demo}
 \docType{data}
 \title{
 Index for normal samples for toy dataset for CODEX2.
@@ -7,7 +7,7 @@ Index for normal samples for toy dataset for CODEX2.
 \description{
 Normal index for demonstration purposes.
 }
-\usage{data(norm_index_codex2)}
+\usage{data(norm_index_demo)}
 \value{
 Normal index demo data (vector).
 }
@@ -18,6 +18,6 @@ Normal index for CODEX2's normalization procedure in the case-control setting.
 Yuchao Jiang \email{yuchaoj@email.unc.edu}
 }
 \examples{
-head(norm_index_codex2)
+head(norm_index_demo)
 }
 \keyword{datasets}

@@ -12,8 +12,8 @@ High-throughput DNA sequencing enables detection of copy number variations (CNVs
 \tabular{ll}{
 Package: \tab CODEX2\cr
 Type: \tab Package\cr
-Version: \tab 1.1.0\cr
-Date: \tab 2017-12-18\cr
+Version: \tab 1.3.0\cr
+Date: \tab 2018-04-09\cr
 License: \tab GPL-2\cr
 }
 CODEX2 takes as input the bam files/directories for whole exome sequencing 
@@ -21,6 +21,6 @@ datasets and bed files for exonic positions, returns raw and normalized coverage
 for each exon, and calls copy number variations with genotyping results.
 }
 \author{
-Yuchao Jiang <yuchaoj@email.unc.edu>, Nancy R. Zhang
+Yuchao Jiang <yuchaoj@email.unc.edu>
 }
 \keyword{ package }

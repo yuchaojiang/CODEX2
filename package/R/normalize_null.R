@@ -1,8 +1,9 @@
-normalize_null = function (Y_qc, gc_qc, K) 
+normalize_null=function (Y_qc, gc_qc, K, N) 
 {
   if (max(K) > ncol(Y_qc)) 
     stop("Number of latent Poisson factors K cannot exceed the number of \n         samples!")
-  N <- colSums(Y_qc)
+  Ntotal <- N
+  N <- round(N/median(N)*median(colSums(Y_qc)))
   Nmat <- matrix(nrow = nrow(Y_qc), ncol = ncol(Y_qc), data = N, 
                  byrow = TRUE)
   Yhat <- list(length = length(K))
@@ -14,114 +15,59 @@ normalize_null = function (Y_qc, gc_qc, K)
   BIC <- rep(NA, length = length(K))
   RSS <- rep(NA, length = length(K))
   for (ki in 1:length(K)) {
-    k <- K[ki]
-    #message("Computing normalization with k = ", k, " latent factors ... \n",sep="")
-    maxiter <- 10
-    maxhiter <- 50
-    BHTHRESH <- 1e-04
-    HHTHRESH <- 1e-05
-    iter <- 1
-    fhat <- matrix(nrow = nrow(Y_qc), ncol = ncol(Y_qc), 
-                   data = 0)
-    fhatnew <- matrix(nrow = nrow(Y_qc), ncol = ncol(Y_qc))
-    betahat <- rep(1, nrow(Y_qc))
-    betahatmat <- matrix(nrow = nrow(Y_qc), ncol = ncol(Y_qc), 
-                         data = betahat, byrow = FALSE)
-    ghat <- matrix(0, nrow = nrow(Y_qc), ncol = k)
-    hhat <- matrix(0, nrow = ncol(Y_qc), ncol = k)
-    bhdiff <- rep(Inf, maxiter)
-    fhdiff <- rep(Inf, maxiter)
-    betahatlist <- list(length = maxiter)
-    fhatlist <- list(length = maxiter)
-    ghatlist <- list(length = maxiter)
-    hhatlist <- list(length = maxiter)
-    while (iter <= maxiter) {
-      gcfit <- Y_qc/Nmat/betahatmat/exp(ghat %*% t(hhat))
-      fhatnew <- apply(gcfit, 2, function(z) {
-        spl <- smooth.spline(gc_qc, z)
-        temp <- predict(spl, gc_qc)$y
-        temp[temp <= 0] <- min(temp[temp > 0])
-        temp
-      })
-      betahatnew <- apply(Y_qc/(fhatnew * Nmat * exp(ghat %*% 
-                                                       t(hhat))), 1, median)
-      bhdiff[iter] <- sum((betahatnew - betahat)^2)/length(betahat)
-      fhdiff[iter] <- sum((fhatnew - fhat)^2)/length(fhat)
-      if (fhdiff[iter] > min(fhdiff)) 
-        break
-      #message("Iteration ", iter, "\t", "beta diff =", 
-      #        signif(bhdiff[iter], 3), "\t", "f(GC) diff =", 
-      #        signif(fhdiff[iter], 3))
-      fhat <- fhatnew
-      betahat <- betahatnew
-      betahatmat <- matrix(nrow = nrow(Y_qc), ncol = ncol(Y_qc), 
-                           data = betahat, byrow = FALSE)
-      L <- log(Nmat * fhat * betahatmat)
-      logmat <- log(pmax(Y_qc, 1)) - L
-      logmat <- logmat - matrix(nrow = nrow(Y_qc), ncol = ncol(Y_qc), 
-                                data = apply(logmat, 1, mean), byrow = FALSE)
-      #### Threshold logmat so we are not thrown off by the large values.
-      # logmat=threshold(logmat,-3*sd(logmat),3*sd(logmat))
-      svdres=svd(logmat, nu = k, nv = k)
-      hhat <- svdres$v
-      
-      hhatnew <- hhat
-      hiter <- 1
-      hhdiff <- rep(Inf, maxhiter)
-      while (hiter <= maxhiter) {
-        for (s in 1:nrow(Y_qc)) {
-          ghat[s, ] <- glm(formula = Y_qc[s, ] ~ hhat - 
-                             1, offset = L[s, ], family = poisson)$coefficients
-        }
-        for (t in 1:ncol(Y_qc)) {
-          hhatnew[t, ] <- glm(formula = Y_qc[, t] ~ ghat - 
-                                1, offset = L[, t], family = poisson)$coefficients
-        }
-        gh <- ghat %*% t(hhatnew)
-        gh <- gh - matrix(nrow = nrow(Y_qc), ncol = ncol(Y_qc), 
-                          data = apply(gh, 1, mean), byrow = FALSE)
-        hhatnew <- svd(gh, nu = k, nv = k)$v
-        hhdiff[hiter] <- sum((hhatnew - hhat)^2)/length(hhat)
-        hhat <- hhatnew
-        if (hhdiff[hiter] < HHTHRESH) 
-          break
-        if (hiter > 10 & (rank(hhdiff))[hiter] <= 3) 
-          break
-        hiter <- hiter + 1
-      }
-      fhatlist[[iter]] <- fhat
-      betahatlist[[iter]] <- betahat
-      ghatlist[[iter]] <- ghat
-      hhatlist[[iter]] <- hhat
-      if (bhdiff[iter] < BHTHRESH) 
-        break
-      if (iter > 5 & bhdiff[iter] > 1) 
-        break
-      iter <- iter + 1
+    k = K[ki]
+    normObj.codex=normalize(Y_qc, gc_qc, K=k, N=Ntotal, message = FALSE)
+    Yhat.codex=normObj.codex$Yhat[[1]]
+    z.codex=log(pmax(Y_qc,1)/pmax(Yhat.codex,1))
+    nonCNV.index=apply(z.codex,1,sd)<0.15
+    
+    normObj.codex.nonCNV=normalize(Y_qc[nonCNV.index,], gc_qc[nonCNV.index],
+                                   K = k, N = Ntotal, message = TRUE)
+    h.hat.codex2.nr=normObj.codex.nonCNV$h.hat[[1]]
+    
+    
+    fGC.hat.codex2.nr=matrix(ncol=ncol(Y_qc),nrow=nrow(Y_qc),data=NA)
+    fGC.hat.codex2.nr[nonCNV.index,]=normObj.codex.nonCNV$fGC.hat[[1]]
+    
+    for(t in 1:ncol(Y_qc)){
+      spl <- smooth.spline(gc_qc[nonCNV.index],fGC.hat.codex2.nr[nonCNV.index,t])
+      fGC.pred = predict(spl, gc_qc)$y
+      fGC.pred[fGC.pred < 0] = min(fGC.pred[fGC.pred > 0])
+      fGC.hat.codex2.nr[, t] <- fGC.pred
     }
-    optIter <- which.min(fhdiff)
-    #message(paste("Stop at Iteration ", optIter, ".", sep = ""))
-    fhat <- fhatlist[[optIter]]
-    betahat <- betahatlist[[optIter]]
-    ghat <- ghatlist[[optIter]]
-    hhat <- hhatlist[[optIter]]
+    
+    beta.hat.codex2.nr=rep(NA,nrow(Y_qc))
+    g.hat.codex2.nr=matrix(nrow=nrow(Y_qc),ncol=k)
+    L = log(Nmat * fGC.hat.codex2.nr)
+    for (s in 1:nrow(Y_qc)) {
+      temp = try(glm(formula = Y_qc[s, ] ~ 
+                       h.hat.codex2.nr, offset = L[s, ],family = poisson)$coefficients, silent = TRUE)
+      if (is.character(temp)) {
+        temp = lm(log(pmax(Y_qc[s, ], 1)) ~ h.hat.codex2.nr,offset = L[s, ])$coefficients
+      }
+      g.hat.codex2.nr[s,] = temp[2:length(temp)]
+      beta.hat.codex2.nr[s]=exp(temp[1])
+    }
     betahatmat <- matrix(nrow = nrow(Y_qc), ncol = ncol(Y_qc), 
-                         data = betahat, byrow = FALSE)
-    Yhat[[ki]] <- round(fhat * Nmat * betahatmat * exp(ghat %*% 
-                                                         t(hhat)), 0)
-    fGC.hat[[ki]] <- signif(fhat,3)
-    beta.hat[[ki]] <- signif(betahat,3)
-    h.hat[[ki]] <- signif(hhat,3)
-    g.hat[[ki]] <- signif(ghat,3)
+                         data = beta.hat.codex2.nr, byrow = FALSE)
+    Yhat.codex2.nr <- round(fGC.hat.codex2.nr * Nmat * betahatmat * 
+                              exp(g.hat.codex2.nr %*% t(h.hat.codex2.nr)), 0)
+    Yhat[[ki]] <- Yhat.codex2.nr
+    fGC.hat[[ki]] <- signif(fGC.hat.codex2.nr, 3)
+    beta.hat[[ki]] <- signif(beta.hat.codex2.nr, 3)
+    h.hat[[ki]] <- signif(h.hat.codex2.nr, 3)
+    g.hat[[ki]] <- signif(g.hat.codex2.nr, 3)
     AIC[ki] <- 2 * sum(Y_qc * log(pmax(Yhat[[ki]], 1)) - 
-                         Yhat[[ki]]) - 2 * (length(ghat) + length(hhat))
+                         Yhat[[ki]]) - 2 * (length(g.hat[[ki]]) + length(h.hat[[ki]]))
     BIC[ki] <- 2 * sum(Y_qc * log(pmax(Yhat[[ki]], 1)) - 
-                         Yhat[[ki]]) - (length(ghat) + length(hhat)) * log(length(Y_qc))
+                         Yhat[[ki]]) - (length(g.hat[[ki]]) + length(h.hat[[ki]])) * 
+      log(length(Y_qc))
     RSS[ki] <- sum((Y_qc - Yhat[[ki]])^2/length(Y_qc))
-    #message("AIC", k, " = ", round(AIC[ki], 3))
-    #message("BIC", k, " = ", round(BIC[ki], 3))
-    #message("RSS", k, " = ", round(RSS[ki], 3), "\n")
+    message("\tAIC", k, " = ", round(AIC[ki], 3))
+    message("\tBIC", k, " = ", round(BIC[ki], 3))
+    message("\tRSS", k, " = ", round(RSS[ki], 3), "\n")
   }
-  list(Yhat = Yhat, fGC.hat = fGC.hat, beta.hat = beta.hat, g.hat = g.hat,
-       h.hat = h.hat, AIC = AIC, BIC = BIC, RSS = RSS, K = K)
+  list(Yhat = Yhat, fGC.hat = fGC.hat, beta.hat = beta.hat, 
+       g.hat = g.hat, h.hat = h.hat, AIC = AIC, BIC = BIC, RSS = RSS, 
+       K = K)
 }
