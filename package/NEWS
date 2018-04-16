@@ -1,5 +1,7 @@
 Package: CODEX2
 ===================
+04/15/2018 Rewrote function to get mappability.
+
 04/08/2018 Fixed bugs. Changed IRanges object to GRange object. Updated parameter estimation for normalization.
 
 01/28/2018 Fixed bugs. Added HMM for segmentation.

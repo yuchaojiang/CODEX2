@@ -1,27 +1,16 @@
-getmapp=function (ref) {
-  mapp=rep(1, length(ref))
+getmapp = function (ref) {
+  mapp <- rep(1, length(ref))
+  seqlevelsStyle(ref)='UCSC'
   for(chr in unique(seqnames(ref))){
-    message("Getting mappability for chr ", chr, sep = "")
+    message("Getting mappability for ", chr, sep = "")
     chr.index=which(as.matrix(seqnames(ref))==chr)
-    ref.chr=IRanges(start= start(ref)[chr.index] , end = end(ref)[chr.index])
-    if (chr == "X" | chr == "x" | chr == "chrX" | chr == "chrx") {
-      chrtemp <- 23
-    } else if (chr == "Y" | chr == "y" | chr == "chrY" | chr == 
-             "chry") {
-      chrtemp <- 24
-    } else {
-      chrtemp <- as.numeric(mapSeqlevels(as.character(chr), "NCBI")[1])
+    ref.chr=GRanges(seqnames=chr, ranges=IRanges(start= start(ref)[chr.index] , end = end(ref)[chr.index]))
+    mapp.chr=rep(1, length(ref.chr))
+    overlap=as.matrix(findOverlaps(ref.chr, mapp_hg19))
+    for(i in unique(overlap[,1])){
+      mapp.chr[i]=mean(mapp_hg19$mappability[overlap[which(overlap[,1]==i),2]])
     }
-    if (length(chrtemp) == 0) message("Chromosome cannot be found in NCBI Homo sapiens database!")
-    mappability.chr <- mappability[[chrtemp]]
-    mapp_ref.chr <- mapp_ref[[chrtemp]]
-    for (k in 1:length(ref.chr)) {
-      index <- countOverlaps(mapp_ref.chr, ref.chr[k])
-      if (sum(index) > 0) {
-        mapp[chr.index][k] <- mean(mappability.chr[as.logical(index)])
-      }
-    }
+  mapp[chr.index]=mapp.chr
   }
-  mapp=round(mapp,3)
   mapp
 }
