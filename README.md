@@ -93,7 +93,6 @@ CODEX2 can be applied to WES of the mouse genome. The library for the mm10 mouse
 The GC content and the mappability can be obtained from the code below with minor adaptations for the mouse genome:
 * [GC content](https://github.com/yuchaojiang/CODEX2/blob/master/mouse/getgc.R)
 * [Mappability pre-calculation](https://github.com/yuchaojiang/CODEX2/blob/master/mouse/mapp.R) (Note: This step can be computationally extensive and thus parallel computing is recommended. For CODEX2 in its default setting, the mappability for exonic targets in human h19 assembly is pre-computed and stored as part of the package).
-* [Mappability](https://github.com/yuchaojiang/CODEX2/blob/master/mouse/getmapp.R)
 
 ## Common questions
   * How many samples does CODEX2 need? Should I separately run samples from different batches?
