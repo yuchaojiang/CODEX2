@@ -12,52 +12,24 @@ sampname=as.matrix(read.table('sampname.txt'))
 projectname='melanoma_exon'
 bedFile='melanoma_exon.bed'
 
-chr=1
 # get bam directories, read in bed file, get sample names
 bambedObj=getbambed(bamdir=bamdir,
                     bedFile=bedFile,
                     sampname=sampname,
-                    projectname=projectname,chr)
+                    projectname=projectname)
 bamdir=bambedObj$bamdir; sampname=bambedObj$sampname; ref=bambedObj$ref; projectname=bambedObj$projectname;chr=bambedObj$chr
 # get raw depth of coverage
 coverageObj=getcoverage(bambedObj,mapqthres=20)
 Y=coverageObj$Y; readlength=coverageObj$readlength
 # get gc content
-gc=getgc(chr,ref)
+gc=getgc(ref)
 # get mappability
-mapp=getmapp(chr,ref)
+mapp=getmapp(ref)
 
 ref.all=bambedObj$ref
 Y.all=coverageObj$Y
 gc.all=gc
 mapp.all=mapp
-chr.all=rep(chr,length=length(mapp))
-
-targ.chr <- unique(as.matrix(read.table(bedFile, sep = "\t")[,1]))
-
-for(chr in 2:23){
-  if(chr==23){chr='X'}
-  if(!is.element(chr,targ.chr)) next
-  # get bam directories, read in bed file, get sample names
-  bambedObj=getbambed(bamdir=bamdir,
-                      bedFile=bedFile,
-                      sampname=sampname,
-                      projectname=projectname,chr)
-  bamdir=bambedObj$bamdir; sampname=bambedObj$sampname; ref=bambedObj$ref; projectname=bambedObj$projectname;chr=bambedObj$chr
-  # get raw depth of coverage
-  coverageObj=getcoverage(bambedObj,mapqthres=20)
-  Y=coverageObj$Y; readlength=coverageObj$readlength
-  # get gc content
-  gc=getgc(chr,ref)
-  # get mappability
-  mapp=getmapp(chr,ref)
-  
-  ref.all=c(ref.all,bambedObj$ref)
-  Y.all=rbind(Y.all,coverageObj$Y)
-  gc.all=c(gc.all,gc)
-  mapp.all=c(mapp.all,mapp)
-  chr.all=c(chr.all,rep(chr,length=length(mapp)))
-}
 
 save.image(file=paste(projectname,'_','coverage','.rda',sep=''))
 
