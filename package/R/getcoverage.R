@@ -27,6 +27,7 @@ getcoverage=function (bambedObj, mapqthres, chr)
                             flag = flag)
       bam <- scanBam(bamurl, param = param)[[1]]
       mapqfilter <- (bam[["mapq"]] >= mapqthres)
+      readlength.i=round(mean(bam[["qwidth"]]))
     }
     message("\t...sample ", sampname[i], 
             ": ", "read length ", readlength.i, ".", sep = "")
