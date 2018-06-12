@@ -135,7 +135,7 @@ normalize_codex2_ns = function (Y_qc, gc_qc, K, norm_index, N) {
     message("BIC", k, " = ", round(BIC[ki], 3))
     message("RSS", k, " = ", round(RSS[ki], 3), "\n")
   }
-    list(Yhat = Yhat, fGC.hat = fGC.hat, beta.hat = beta.hat, 
+  list(Yhat = Yhat, fGC.hat = fGC.hat, beta.hat = beta.hat, 
        g.hat = g.hat, h.hat = h.hat, AIC = AIC, BIC = BIC, RSS = RSS, 
        K = K)
 }
