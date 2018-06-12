@@ -6,9 +6,13 @@ normalize_codex2_ns = function (Y_qc, gc_qc, K, norm_index, N) {
   N <- round(N/median(N)*median(colSums(Y_qc)))
   Nmat <- matrix(nrow = nrow(Y_qc), ncol = ncol(Y_qc), data = N, byrow = TRUE)
   Yhat = list(length = length(K))
-  AIC = rep(NA, length = length(K))
-  BIC = rep(NA, length = length(K))
-  RSS = rep(NA, length = length)
+  fGC.hat <- list(length = length(K))
+  beta.hat <- list(length = length(K))
+  g.hat <- list(length = length(K))
+  h.hat <- list(length = length(K))
+  AIC <- rep(NA, length = length(K))
+  BIC <- rep(NA, length = length(K))
+  RSS <- rep(NA, length = length(K))
   for (ki in 1:length(K)) {
     k = K[ki]
     message("Computing normalization with k = ", k, " latent factors ...",sep="")
@@ -118,6 +122,10 @@ normalize_codex2_ns = function (Y_qc, gc_qc, K, norm_index, N) {
     betahatmat = matrix(nrow = nrow(Y_qc), ncol = ncol(Y_qc), 
                         data = betahat, byrow = FALSE)
     Yhat[[ki]] = pmax(round(fhat * Nmat * betahatmat * exp(ghat %*% t(hhat)),0),1)
+    fGC.hat[[ki]] <- signif(fhat, 3)
+    beta.hat[[ki]] <- signif(betahat, 3)
+    h.hat[[ki]] <- signif(hhat, 3)
+    g.hat[[ki]] <- signif(ghat, 3)
     AIC[ki] = 2 * sum(Y_qc * log(pmax(Yhat[[ki]],1)) - Yhat[[ki]]) - 
       2 * (length(ghat) + length(hhat))
     BIC[ki] = 2 * sum(Y_qc * log(pmax(Yhat[[ki]],1)) - Yhat[[ki]]) - 
