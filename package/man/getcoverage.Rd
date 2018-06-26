@@ -8,7 +8,7 @@ Gets depth of coverage for each exon across all samples from whole exome
 sequencing files.
 }
 \usage{
-getcoverage(bambedObj, mapqthres, chr)
+getcoverage(bambedObj, mapqthres)
 }
 \arguments{
     \item{bambedObj}{
@@ -17,8 +17,6 @@ getcoverage(bambedObj, mapqthres, chr)
     \item{mapqthres}{
     Mapping quality threshold hold of reads.
     }
-    \item{chr}{
-    Chromosome, which needs to be in the same format as in the bed and bam file.}
 }
 \value{
     \item{Y}{Read depth matrix}
@@ -43,7 +41,7 @@ bamdir <- bambedObj$bamdir
 sampname <- bambedObj$sampname
 projectname <- bambedObj$projectname
 chr=22
-coverageObj <- getcoverage(bambedObj, mapqthres = 20, chr=chr)
+coverageObj <- getcoverage(bambedObj, mapqthres = 20)
 Y.chr <- coverageObj$Y
 }
 \keyword{ package }
