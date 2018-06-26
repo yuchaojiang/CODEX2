@@ -7,7 +7,7 @@ getgc =function (ref) {
     if (chr == "X" | chr == "x" | chr == "chrX" | chr == "chrx") {
       chrtemp <- 23
     } else if (chr == "Y" | chr == "y" | chr == "chrY" | chr == 
-             "chry") {
+               "chry") {
       chrtemp <- 24
     } else {
       chrtemp <- as.numeric(mapSeqlevels(as.character(chr), 

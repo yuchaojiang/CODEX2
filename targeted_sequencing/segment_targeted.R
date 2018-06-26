@@ -1,4 +1,5 @@
-segment_targeted <- function(yi, yhati, sampname_qc, refi, genei, chri, lmax, mode) {
+segment_targeted <- function(yi, yhati, sampname_qc, refi, genei, lmax, mode) {
+  chri <- as.matrix(seqnames(refi))[1]
   finalcall <- matrix(ncol = 10)
   lmax <- lmax - 1
   if(is.vector(yi)){

@@ -18,7 +18,7 @@ qc = function (Y, sampname, ref, cov_thresh, length_thresh,
   binfilter <- binfiltera & binfilterb & binfilterc & binfilterd
   message("After taking union, excluded ", sum(1 - binfilter), 
           " out of ", length(binfilter), " exons in QC.")
-  qcmat <- cbind(seqnames(ref), start(ref), end(ref), 
+  qcmat <- cbind(as.matrix(seqnames(ref)), start(ref), end(ref), 
                  binfilter, apply(Y_qc, 1, median), binfiltera,
                  (end(ref) - start(ref) + 1)/1000, binfilterb, mapp, binfilterc, 
                  round(gc, 2), binfilterd)
