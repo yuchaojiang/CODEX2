@@ -11,7 +11,7 @@
 
 <meta name="author" content="Yuchao Jiang" />
 
-<meta name="date" content="2018-04-10" />
+<meta name="date" content="2018-06-26" />
 
 <title>CODEX2: Full-spectrum copy number variation detection by high-throughput DNA sequencing</title>
 
@@ -157,7 +157,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">CODEX2: Full-spectrum copy number variation detection by high-throughput DNA sequencing</h1>
 <h4 class="author"><em>Yuchao Jiang</em></h4>
-<h4 class="date"><em>2018-04-10</em></h4>
+<h4 class="date"><em>2018-06-26</em></h4>
 <div class="abstract">
 <p class="abstract">Abstract</p>
 <p>High-throughput DNA sequencing enables detection of copy number variations (CNVs) on the genome-wide scale with finer resolution compared to array-based methods, but suffers from biases and artifacts that lead to false discoveries and low sensitivity. We describe CODEX2, a statistical framework for full-spectrum CNV profiling that is sensitive for variants with both common and rare population frequencies and that is applicable to study designs with and without negative control samples. We demonstrate and evaluate CODEX2 on whole-exome and targeted sequencing data, where biases are the most prominent. CODEX2 outperforms existing methods and, in particular, significantly improves sensitivity for common CNVs.</p>
@@ -223,9 +223,9 @@ mapp &lt;-<span class="st"> </span><span class="kw">getmapp</span>(ref)
 <div id="getting-raw-read-depth" class="section level2">
 <h2>Getting raw read depth</h2>
 <p>Read depth matrix, as well as read lengths across all samples, will be returned. This will need to be generated for each chromosome.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">coverageObj &lt;-<span class="st"> </span><span class="kw">getcoverage</span>(bambedObj, <span class="dt">mapqthres =</span> <span class="dv">20</span>, <span class="dt">chr =</span> <span class="dv">22</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">coverageObj &lt;-<span class="st"> </span><span class="kw">getcoverage</span>(bambedObj, <span class="dt">mapqthres =</span> <span class="dv">20</span>)
 Y &lt;-<span class="st"> </span>coverageObj$Y
-<span class="kw">write.csv</span>(Y, <span class="dt">file =</span> <span class="kw">paste</span>(projectname, <span class="st">'_coverage_'</span>, <span class="dt">chr =</span> <span class="dv">22</span>, <span class="st">'.csv'</span>, <span class="dt">sep=</span><span class="st">''</span>), <span class="dt">quote =</span> <span class="ot">FALSE</span>)
+<span class="kw">write.csv</span>(Y, <span class="dt">file =</span> <span class="kw">paste</span>(projectname, <span class="st">'_coverage.csv'</span>, <span class="dt">sep=</span><span class="st">''</span>), <span class="dt">quote =</span> <span class="ot">FALSE</span>)
 <span class="kw">head</span>(Y[,<span class="dv">1</span>:<span class="dv">5</span>])</code></pre></div>
 <pre><code>##                      NA06994 NA10847 NA11840 NA12249 NA12716
 ## 22:21345867-21346168       5       9       7      11      11
@@ -237,24 +237,13 @@ Y &lt;-<span class="st"> </span>coverageObj$Y
 </div>
 <div id="quality-control" class="section level2">
 <h2>Quality control</h2>
-<p>First, read in genome-wide data.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Y.all &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">nrow=</span><span class="kw">length</span>(ref), <span class="dt">ncol=</span><span class="kw">length</span>(sampname))
-<span class="kw">colnames</span>(Y.all) &lt;-<span class="st"> </span>sampname
-<span class="kw">rownames</span>(Y.all) &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="kw">seqnames</span>(ref),<span class="st">':'</span>,<span class="kw">start</span>(ref),<span class="st">'-'</span>,<span class="kw">end</span>(ref),<span class="dt">sep=</span><span class="st">''</span>)
-for(chr in <span class="kw">unique</span>(<span class="kw">seqnames</span>(ref))){
-  <span class="kw">message</span>(chr)
-  chr.index &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">seqnames</span>(ref)==chr)
-  Y.chr &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="kw">paste</span>(projectname, <span class="st">'_coverage_'</span>, chr, <span class="st">'.csv'</span>, <span class="dt">sep=</span><span class="st">''</span>),
-                    <span class="dt">row.names =</span> <span class="dv">1</span>)
-  Y.all[chr.index,] &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(Y.chr)
-}</code></pre></div>
-<p>Then, take a sample-wise and exon-wise quality control procedure on the depth of coverage matrix.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">qcObj &lt;-<span class="st"> </span><span class="kw">qc</span>(Y.all, sampname, ref, <span class="dt">cov_thresh =</span> <span class="kw">c</span>(<span class="dv">20</span>, <span class="dv">4000</span>),
+<p>Take a sample-wise and exon-wise quality control procedure on the depth of coverage matrix.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">qcObj &lt;-<span class="st"> </span><span class="kw">qc</span>(Y, sampname, ref, <span class="dt">cov_thresh =</span> <span class="kw">c</span>(<span class="dv">20</span>, <span class="dv">4000</span>),
             <span class="dt">length_thresh =</span> <span class="kw">c</span>(<span class="dv">20</span>, <span class="dv">2000</span>), <span class="dt">mapp_thresh =</span> <span class="fl">0.9</span>,
             <span class="dt">gc_thresh =</span> <span class="kw">c</span>(<span class="dv">20</span>, <span class="dv">80</span>))
-Y.all_qc &lt;-<span class="st"> </span>qcObj$Y_qc; sampname_qc &lt;-<span class="st"> </span>qcObj$sampname_qc
+Y_qc &lt;-<span class="st"> </span>qcObj$Y_qc; sampname_qc &lt;-<span class="st"> </span>qcObj$sampname_qc
 ref_qc &lt;-<span class="st"> </span>qcObj$ref_qc; qcmat &lt;-<span class="st"> </span>qcObj$qcmat; gc_qc &lt;-<span class="st"> </span>ref_qc$gc
-<span class="kw">write.table</span>(qcmat, <span class="dt">file =</span> <span class="kw">paste</span>(projectname, <span class="st">'_'</span>, chr, <span class="st">'_qcmat'</span>, <span class="st">'.txt'</span>, <span class="dt">sep=</span><span class="st">''</span>),
+<span class="kw">write.table</span>(qcmat, <span class="dt">file =</span> <span class="kw">paste</span>(projectname, <span class="st">'_qcmat'</span>, <span class="st">'.txt'</span>, <span class="dt">sep=</span><span class="st">''</span>),
             <span class="dt">sep =</span> <span class="st">'</span><span class="ch">\t</span><span class="st">'</span>, <span class="dt">quote =</span> <span class="ot">FALSE</span>, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)</code></pre></div>
 </div>
 </div>
@@ -262,11 +251,11 @@ ref_qc &lt;-<span class="st"> </span>qcObj$ref_qc; qcmat &lt;-<span class="st"> 
 <h1>Running CODEX2</h1>
 <p>For demonstration purpose, we in silico spiked in CNVs spanning exon 1580 - 1620 with a population frequency 40%. There are altogether 90 samples, 36 of which have the heterozygous deletion. The toy dataset is stored as part of the CODEX2 R-package.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Load pre-stored data.</span>
-Y.all_qc &lt;-<span class="st"> </span>Y_qc_demo
+Y_qc &lt;-<span class="st"> </span>Y_qc_demo
 ref_qc &lt;-<span class="st"> </span>ref_qc_demo
 gc_qc &lt;-<span class="st"> </span>ref_qc$gc</code></pre></div>
 <p>Estimate library size factor based on genome-wide read depth after QC. It is important, especially in cancer genomics, to calculate library size factor using genome-wide data, as chromosomal read depth can be attentuated by large copy number aberrations.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Y.nonzero &lt;-<span class="st"> </span>Y.all_qc[<span class="kw">apply</span>(Y.all_qc, <span class="dv">1</span>, function(x){!<span class="kw">any</span>(x==<span class="dv">0</span>)}),]
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Y.nonzero &lt;-<span class="st"> </span>Y_qc[<span class="kw">apply</span>(Y_qc, <span class="dv">1</span>, function(x){!<span class="kw">any</span>(x==<span class="dv">0</span>)}),]
 pseudo.sample &lt;-<span class="st"> </span><span class="kw">apply</span>(Y.nonzero,<span class="dv">1</span>,function(x){<span class="kw">prod</span>(x)^(<span class="dv">1</span>/<span class="kw">length</span>(x))})
 N &lt;-<span class="st"> </span><span class="kw">apply</span>(<span class="kw">apply</span>(Y.nonzero, <span class="dv">2</span>, function(x){x/pseudo.sample}), <span class="dv">2</span>, median)</code></pre></div>
 <div id="running-codex2-without-specifying-negative-control-samplesregions" class="section level2">
@@ -274,7 +263,7 @@ N &lt;-<span class="st"> </span><span class="kw">apply</span>(<span class="kw">a
 <p>Y_qc and gc_qc can be obtained from the sequencing bam files using the code in the previous section.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">chr &lt;-<span class="st"> </span><span class="dv">20</span> <span class="co"># This can be run for one chromosome or multiple chromosomes</span>
 chr.index &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">seqnames</span>(ref_qc)==chr)
-normObj.null &lt;-<span class="st"> </span><span class="kw">normalize_null</span>(<span class="dt">Y_qc =</span> Y.all_qc[chr.index,],
+normObj.null &lt;-<span class="st"> </span><span class="kw">normalize_null</span>(<span class="dt">Y_qc =</span> Y_qc[chr.index,],
                                <span class="dt">gc_qc =</span> gc_qc[chr.index],
                                <span class="dt">K =</span> <span class="dv">1</span>:<span class="dv">5</span>, <span class="dt">N =</span> N)
 Yhat.null &lt;-<span class="st"> </span>normObj.null$Yhat
@@ -288,7 +277,7 @@ RSS.null &lt;-<span class="st"> </span>normObj.null$RSS</code></pre></div>
 <h2>Running CODEX2 with negative control samples</h2>
 <p>For the case-control scenario, the normal sample index is known (samples without spike-in signals).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Below are pre-computed demo dataset, stored as part of the CODEX2 R-package.</span>
-normObj &lt;-<span class="st"> </span><span class="kw">normalize_codex2_ns</span>(<span class="dt">Y_qc =</span> Y.all_qc[chr.index,],
+normObj &lt;-<span class="st"> </span><span class="kw">normalize_codex2_ns</span>(<span class="dt">Y_qc =</span> Y_qc[chr.index,],
                                <span class="dt">gc_qc =</span> gc_qc[chr.index], 
                                <span class="dt">K =</span> <span class="dv">1</span>:<span class="dv">5</span>, <span class="dt">norm_index =</span> norm_index_demo,
                                <span class="dt">N =</span> N)
@@ -303,7 +292,7 @@ AIC.ns &lt;-<span class="st"> </span>normObj$AIC; BIC.ns &lt;-<span class="st"> 
 <h2>Running CODEX2 with negative control regions</h2>
 <p>We can empirically identify common CNV regions by a first-pass CODEX run: For exons residing in common CNV regions, the s.d. of normalized z-scores across all samples will be large. This can also be provided by the user as known, e.g., from existing database (DGV or dbVar) or knowledge (tumor supressors or oncogenes with recurrent CNA changes).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Empirically identify common CNV regions from the data.</span>
-z.codex2 &lt;-<span class="st"> </span><span class="kw">log</span>(Y.all_qc[chr.index,]/normObj.null$Yhat[[<span class="kw">which.max</span>(normObj.null$BIC)]])
+z.codex2 &lt;-<span class="st"> </span><span class="kw">log</span>(Y_qc[chr.index,]/normObj.null$Yhat[[<span class="kw">which.max</span>(normObj.null$BIC)]])
 <span class="kw">plot</span>(<span class="dv">1</span>:<span class="kw">nrow</span>(z.codex2), <span class="kw">apply</span>(z.codex2, <span class="dv">1</span>, sd))
 <span class="kw">which</span>(<span class="kw">apply</span>(z.codex2,<span class="dv">1</span>,sd)&gt;=<span class="fl">0.25</span>) 
 cnv_index1 &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">apply</span>(z.codex2,<span class="dv">1</span>,sd)&gt;=<span class="fl">0.25</span>) 
@@ -311,7 +300,7 @@ cnv_index1 &lt;-<span class="st"> </span><span class="kw">which</span>(<span cla
 cnv_index2 &lt;-<span class="st"> </span><span class="dv">1580</span>:<span class="dv">1620</span>
 <span class="kw">all</span>(cnv_index1 ==<span class="st"> </span>cnv_index2)
 
-normObj &lt;-<span class="st"> </span><span class="kw">normalize_codex2_nr</span>(<span class="dt">Y_qc =</span> Y.all_qc[chr.index,], <span class="dt">gc_qc =</span> gc_qc[chr.index], 
+normObj &lt;-<span class="st"> </span><span class="kw">normalize_codex2_nr</span>(<span class="dt">Y_qc =</span> Y_qc[chr.index,], <span class="dt">gc_qc =</span> gc_qc[chr.index], 
                               <span class="dt">K =</span> <span class="dv">1</span>:<span class="dv">5</span>, <span class="dt">cnv_index =</span> cnv_index2,
                               <span class="dt">N =</span> N)
 Yhat.nr &lt;-<span class="st"> </span>normObj$Yhat; fGC.hat.nr &lt;-<span class="st"> </span>normObj$fGC.hat;
@@ -322,17 +311,17 @@ AIC.nr &lt;-<span class="st"> </span>normObj$AIC; BIC.nr &lt;-<span class="st"> 
 <div id="running-segmentation-by-codex2" class="section level1">
 <h1>Running segmentation by CODEX2</h1>
 <p>We offer two versions of segmentation procedures: poisson-likelihood based recursive segmentation (recommended) and hidden Markov model (not recommended). For CODEX2 with negative control regions, simply change Yhat.ns to Yhat.nr in the code below.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">finalcall.CBS &lt;-<span class="st"> </span><span class="kw">segmentCBS</span>(Y.all_qc[chr.index,],  <span class="co"># recommended</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">finalcall.CBS &lt;-<span class="st"> </span><span class="kw">segmentCBS</span>(Y_qc[chr.index,],  <span class="co"># recommended</span>
                             Yhat.ns, <span class="dt">optK =</span> <span class="kw">which.max</span>(BIC.ns),
                             <span class="dt">K =</span> <span class="dv">1</span>:<span class="dv">5</span>,
-                            <span class="dt">sampname_qc =</span> <span class="kw">paste</span>(<span class="st">'sample'</span>,<span class="dv">1</span>:<span class="kw">ncol</span>(Y.all_qc),<span class="dt">sep=</span><span class="st">''</span>),
+                            <span class="dt">sampname_qc =</span> <span class="kw">paste</span>(<span class="st">'sample'</span>,<span class="dv">1</span>:<span class="kw">ncol</span>(Y_qc),<span class="dt">sep=</span><span class="st">''</span>),
                             <span class="dt">ref_qc =</span> <span class="kw">ranges</span>(ref_qc)[chr.index],
                             <span class="dt">chr =</span> chr, <span class="dt">lmax =</span> <span class="dv">400</span>, <span class="dt">mode =</span> <span class="st">&quot;integer&quot;</span>)
 
-finalcall.HMM &lt;-<span class="st"> </span><span class="kw">segmentHMM</span>(Y.all_qc[chr.index,],  <span class="co"># not recommended</span>
+finalcall.HMM &lt;-<span class="st"> </span><span class="kw">segmentHMM</span>(Y_qc[chr.index,],  <span class="co"># not recommended</span>
                             Yhat.ns, <span class="dt">optK =</span> <span class="kw">which.max</span>(BIC.ns),
                             <span class="dt">K =</span> <span class="dv">1</span>:<span class="dv">5</span>,
-                            <span class="dt">sampname_qc =</span> <span class="kw">paste</span>(<span class="st">'sample'</span>,<span class="dv">1</span>:<span class="kw">ncol</span>(Y.all_qc),<span class="dt">sep=</span><span class="st">''</span>),
+                            <span class="dt">sampname_qc =</span> <span class="kw">paste</span>(<span class="st">'sample'</span>,<span class="dv">1</span>:<span class="kw">ncol</span>(Y_qc),<span class="dt">sep=</span><span class="st">''</span>),
                             <span class="dt">ref_qc =</span> <span class="kw">ranges</span>(ref_qc)[chr.index],
                             <span class="dt">chr =</span> chr, <span class="dt">mode =</span> <span class="st">&quot;integer&quot;</span>)</code></pre></div>
 <p>Post-segmentation pruning and filtering are recommended based on CNV length (filter1), length per exon (filter2), likelihood ratio (filter3), and number of exons (filter4).</p>

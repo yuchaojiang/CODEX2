@@ -68,38 +68,23 @@ values(ref) <- cbind(values(ref), DataFrame(gc, mapp))
 
 Read depth matrix, as well as read lengths across all samples, will be returned. This will need to be generated for each chromosome.
 ```{r, message=FALSE}
-coverageObj <- getcoverage(bambedObj, mapqthres = 20, chr = 22)
+coverageObj <- getcoverage(bambedObj, mapqthres = 20)
 Y <- coverageObj$Y
-write.csv(Y, file = paste(projectname, '_coverage_', chr = 22, '.csv', sep=''), quote = FALSE)
+write.csv(Y, file = paste(projectname, '_coverage.csv', sep=''), quote = FALSE)
 head(Y[,1:5])
 ```
 
 ## Quality control
 
-First, read in genome-wide data.
-
-```{r, message= F}
-Y.all <- matrix(nrow=length(ref), ncol=length(sampname))
-colnames(Y.all) <- sampname
-rownames(Y.all) <- paste(seqnames(ref),':',start(ref),'-',end(ref),sep='')
-for(chr in unique(seqnames(ref))){
-  message(chr)
-  chr.index <- which(seqnames(ref)==chr)
-  Y.chr <- read.csv(paste(projectname, '_coverage_', chr, '.csv', sep=''),
-                    row.names = 1)
-  Y.all[chr.index,] <- as.matrix(Y.chr)
-}
-```
-
-Then, take a sample-wise and exon-wise quality control procedure on 
+Take a sample-wise and exon-wise quality control procedure on 
 the depth of coverage matrix.
 ```{r, message = FALSE}
-qcObj <- qc(Y.all, sampname, ref, cov_thresh = c(20, 4000),
+qcObj <- qc(Y, sampname, ref, cov_thresh = c(20, 4000),
             length_thresh = c(20, 2000), mapp_thresh = 0.9,
             gc_thresh = c(20, 80))
-Y.all_qc <- qcObj$Y_qc; sampname_qc <- qcObj$sampname_qc
+Y_qc <- qcObj$Y_qc; sampname_qc <- qcObj$sampname_qc
 ref_qc <- qcObj$ref_qc; qcmat <- qcObj$qcmat; gc_qc <- ref_qc$gc
-write.table(qcmat, file = paste(projectname, '_', chr, '_qcmat', '.txt', sep=''),
+write.table(qcmat, file = paste(projectname, '_qcmat', '.txt', sep=''),
             sep = '\t', quote = FALSE, row.names = FALSE)
 ```
 
@@ -109,7 +94,7 @@ For demonstration purpose, we in silico spiked in CNVs spanning exon 1580 - 1620
 
 ```{r}
 # Load pre-stored data.
-Y.all_qc <- Y_qc_demo
+Y_qc <- Y_qc_demo
 ref_qc <- ref_qc_demo
 gc_qc <- ref_qc$gc
 ```
@@ -117,7 +102,7 @@ gc_qc <- ref_qc$gc
 Estimate library size factor based on genome-wide read depth after QC. It is important, especially in cancer genomics, to calculate library size factor using genome-wide data, as chromosomal read depth can be attentuated by large copy number aberrations.
 
 ```{r, message=FALSE}
-Y.nonzero <- Y.all_qc[apply(Y.all_qc, 1, function(x){!any(x==0)}),]
+Y.nonzero <- Y_qc[apply(Y_qc, 1, function(x){!any(x==0)}),]
 pseudo.sample <- apply(Y.nonzero,1,function(x){prod(x)^(1/length(x))})
 N <- apply(apply(Y.nonzero, 2, function(x){x/pseudo.sample}), 2, median)
 ```
@@ -129,7 +114,7 @@ Y_qc and gc_qc can be obtained from the sequencing bam files using the code in t
 ```{r, message=FALSE}
 chr <- 20 # This can be run for one chromosome or multiple chromosomes
 chr.index <- which(seqnames(ref_qc)==chr)
-normObj.null <- normalize_null(Y_qc = Y.all_qc[chr.index,],
+normObj.null <- normalize_null(Y_qc = Y_qc[chr.index,],
                                gc_qc = gc_qc[chr.index],
                                K = 1:5, N = N)
 Yhat.null <- normObj.null$Yhat
@@ -159,7 +144,7 @@ For the case-control scenario, the normal sample index is known (samples without
 
 ```{r, message=FALSE}
 # Below are pre-computed demo dataset, stored as part of the CODEX2 R-package.
-normObj <- normalize_codex2_ns(Y_qc = Y.all_qc[chr.index,],
+normObj <- normalize_codex2_ns(Y_qc = Y_qc[chr.index,],
                                gc_qc = gc_qc[chr.index], 
                                K = 1:5, norm_index = norm_index_demo,
                                N = N)
@@ -191,7 +176,7 @@ We can empirically identify common CNV regions by a first-pass CODEX run: For ex
 
 ```{r, message= FALSE, eval=FALSE}
 # Empirically identify common CNV regions from the data.
-z.codex2 <- log(Y.all_qc[chr.index,]/normObj.null$Yhat[[which.max(normObj.null$BIC)]])
+z.codex2 <- log(Y_qc[chr.index,]/normObj.null$Yhat[[which.max(normObj.null$BIC)]])
 plot(1:nrow(z.codex2), apply(z.codex2, 1, sd))
 which(apply(z.codex2,1,sd)>=0.25) 
 cnv_index1 <- which(apply(z.codex2,1,sd)>=0.25) 
@@ -199,7 +184,7 @@ cnv_index1 <- which(apply(z.codex2,1,sd)>=0.25)
 cnv_index2 <- 1580:1620
 all(cnv_index1 == cnv_index2)
 
-normObj <- normalize_codex2_nr(Y_qc = Y.all_qc[chr.index,], gc_qc = gc_qc[chr.index], 
+normObj <- normalize_codex2_nr(Y_qc = Y_qc[chr.index,], gc_qc = gc_qc[chr.index], 
                               K = 1:5, cnv_index = cnv_index2,
                               N = N)
 Yhat.nr <- normObj$Yhat; fGC.hat.nr <- normObj$fGC.hat;
@@ -213,17 +198,17 @@ AIC.nr <- normObj$AIC; BIC.nr <- normObj$BIC; RSS.nr <- normObj$RSS
 We offer two versions of segmentation procedures: poisson-likelihood based recursive segmentation (recommended) and hidden Markov model (not recommended). For CODEX2 with negative control regions, simply change Yhat.ns to Yhat.nr in the code below.
 
 ```{r, message=FALSE}
-finalcall.CBS <- segmentCBS(Y.all_qc[chr.index,],  # recommended
+finalcall.CBS <- segmentCBS(Y_qc[chr.index,],  # recommended
                             Yhat.ns, optK = which.max(BIC.ns),
                             K = 1:5,
-                            sampname_qc = paste('sample',1:ncol(Y.all_qc),sep=''),
+                            sampname_qc = paste('sample',1:ncol(Y_qc),sep=''),
                             ref_qc = ranges(ref_qc)[chr.index],
                             chr = chr, lmax = 400, mode = "integer")
 
-finalcall.HMM <- segmentHMM(Y.all_qc[chr.index,],  # not recommended
+finalcall.HMM <- segmentHMM(Y_qc[chr.index,],  # not recommended
                             Yhat.ns, optK = which.max(BIC.ns),
                             K = 1:5,
-                            sampname_qc = paste('sample',1:ncol(Y.all_qc),sep=''),
+                            sampname_qc = paste('sample',1:ncol(Y_qc),sep=''),
                             ref_qc = ranges(ref_qc)[chr.index],
                             chr = chr, mode = "integer")
 ```
