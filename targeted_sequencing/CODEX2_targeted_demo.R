@@ -93,6 +93,7 @@ finalcall.CBS <- segmentCBS(Y_qc[chr.index,],
 # CBS segmentation per gene: optinmal for targeted seq
 ##########################################################
 source('segment_targeted.R')
+# Available at: https://github.com/yuchaojiang/CODEX2/blob/master/targeted_sequencing/segment_targeted.R
 optK=which.max(BIC)
 finalcall=matrix(ncol=14,nrow=0)
 colnames(finalcall)=c('sample_name','chr','gene','cnv',
