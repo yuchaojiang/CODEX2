@@ -17,6 +17,7 @@ ref <- bambedObj$ref; projectname <- bambedObj$projectname
 ##########################################################
 gc <- getgc(ref)
 mapp <- getmapp(ref)
+
 ##########################################################
 # Getting gene names, needed for targeted sequencing, here generating gene names in silico
 ##########################################################
