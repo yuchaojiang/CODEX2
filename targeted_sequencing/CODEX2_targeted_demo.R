@@ -1,7 +1,9 @@
 setwd("~/Dropbox/CODEX2")
 
 library(CODEX2)
+##########################################################
 # Initialization
+##########################################################
 dirPath=getwd()
 bamFile <- list.files(dirPath, pattern = '*.bam$')
 bamdir <- file.path(dirPath, bamFile)
@@ -12,10 +14,14 @@ bambedObj <- getbambed(bamdir = bamdir, bedFile = bedFile,
 bamdir <- bambedObj$bamdir; sampname <- bambedObj$sampname
 ref <- bambedObj$ref; projectname <- bambedObj$projectname
 
+##########################################################
 # Getting GC content and mappability
+##########################################################
 gc <- getgc(ref)
 mapp <- getmapp(ref)
+##########################################################
 # Getting gene names, needed for targeted sequencing, here generating gene names in silico
+##########################################################
 gene=rep(NA,length(ref))
 for(chr in as.matrix(unique(seqnames(ref)))){
   chr.index=which(seqnames(ref)==chr)
@@ -23,13 +29,17 @@ for(chr in as.matrix(unique(seqnames(ref)))){
 }
 values(ref) <- cbind(values(ref), DataFrame(gc, mapp, gene))  
 
+##########################################################
 # Getting depth of coverage
+##########################################################
 coverageObj <- getcoverage(bambedObj, mapqthres = 20)
 Y <- coverageObj$Y
 write.csv(Y, file = paste(projectname, '_coverage.csv', sep=''), quote = FALSE)
 head(Y[,1:5])
 
+##########################################################
 # Quality control
+##########################################################
 qcObj <- qc(Y, sampname, ref, cov_thresh = c(20, Inf),
             length_thresh = c(20, Inf), mapp_thresh = 0.9,
             gc_thresh = c(20, 80))
@@ -38,13 +48,17 @@ ref_qc <- qcObj$ref_qc; qcmat <- qcObj$qcmat; gc_qc <- ref_qc$gc
 write.table(qcmat, file = paste(projectname, '_qcmat', '.txt', sep=''),
             sep = '\t', quote = FALSE, row.names = FALSE)
 
+##########################################################
 # Estimating library size factor for each sample
+##########################################################
 Y.nonzero <- Y_qc[apply(Y_qc, 1, function(x){!any(x==0)}),]
 pseudo.sample <- apply(Y.nonzero,1,function(x){prod(x)^(1/length(x))})
 N <- apply(apply(Y.nonzero, 2, function(x){x/pseudo.sample}), 2, median)
 plot(N, apply(Y,2,sum), xlab='Estimated library size factor', ylab='Total sum of reads')
 
+##########################################################
 # Genome-wide normalization using normalize_null
+##########################################################
 # If there are negative control samples, use normalize_codex2_ns()
 # If there are negative control regions, use normalize_codex2_nr()
 normObj.null <- normalize_null(Y_qc = Y_qc,
@@ -54,7 +68,9 @@ Yhat <- normObj.null$Yhat
 AIC <- normObj.null$AIC; BIC <- normObj.null$BIC
 RSS <- normObj.null$RSS
 
+##########################################################
 # Number of latent factors
+##########################################################
 choiceofK(AIC, BIC, RSS, K = 1:4 , filename = "codex2_null_choiceofK.pdf")
 par(mfrow = c(1, 3))
 plot(1:4, RSS, type = "b", xlab = "Number of latent variables", pch=20)
@@ -62,9 +78,9 @@ plot(1:4, AIC, type = "b", xlab = "Number of latent variables", pch=20)
 plot(1:4, BIC, type = "b", xlab = "Number of latent variables", pch=20)
 par(mfrow = c(1,1))
 
-save.image(file='CODEX2_temp_2.rda')
-
+##########################################################
 # CBS segmentation per chromosome: optimal for WGS and WES
+##########################################################
 chr='chr1'
 chr.index=which(seqnames(ref_qc)==chr)
 finalcall.CBS <- segmentCBS(Y_qc[chr.index,],
@@ -74,7 +90,9 @@ finalcall.CBS <- segmentCBS(Y_qc[chr.index,],
                             ref_qc = ranges(ref_qc)[chr.index],
                             chr = chr, lmax = 400, mode = "integer")
 
-# CBS segmentation per gene: optinmal for targeted sequencing
+##########################################################
+# CBS segmentation per gene: optinmal for targeted seq
+##########################################################
 source('segment_targeted.R')
 optK=which.max(BIC)
 finalcall=matrix(ncol=14,nrow=0)
@@ -100,5 +118,3 @@ finalcall=cbind(finalcall[,1:7],length_exon,finalcall[,10:14])
 
 write.table(finalcall, file = paste( projectname,'_', optK, '_CODEX_frac.txt',
                                      sep=''), sep='\t', quote=F, row.names=F)
-
-save.image(file='CODEX2_temp_3.rda')
