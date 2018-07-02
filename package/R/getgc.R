@@ -1,7 +1,7 @@
 getgc =function (ref) {
   gc=rep(NA,length(ref))
   for(chr in unique(seqnames(ref))){
-    message("Getting GC content for chr ", chr, sep = "")
+    message("Getting GC content for ", chr, sep = "")
     chr.index=which(as.matrix(seqnames(ref))==chr)
     ref.chr=IRanges(start= start(ref)[chr.index] , end = end(ref)[chr.index])
     if (chr == "X" | chr == "x" | chr == "chrX" | chr == "chrx") {
