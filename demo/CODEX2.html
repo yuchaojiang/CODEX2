@@ -11,7 +11,7 @@
 
 <meta name="author" content="Yuchao Jiang" />
 
-<meta name="date" content="2018-06-26" />
+<meta name="date" content="2018-07-02" />
 
 <title>CODEX2: Full-spectrum copy number variation detection by high-throughput DNA sequencing</title>
 
@@ -157,7 +157,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">CODEX2: Full-spectrum copy number variation detection by high-throughput DNA sequencing</h1>
 <h4 class="author"><em>Yuchao Jiang</em></h4>
-<h4 class="date"><em>2018-06-26</em></h4>
+<h4 class="date"><em>2018-07-02</em></h4>
 <div class="abstract">
 <p class="abstract">Abstract</p>
 <p>High-throughput DNA sequencing enables detection of copy number variations (CNVs) on the genome-wide scale with finer resolution compared to array-based methods, but suffers from biases and artifacts that lead to false discoveries and low sensitivity. We describe CODEX2, a statistical framework for full-spectrum CNV profiling that is sensitive for variants with both common and rare population frequencies and that is applicable to study designs with and without negative control samples. We demonstrate and evaluate CODEX2 on whole-exome and targeted sequencing data, where biases are the most prominent. CODEX2 outperforms existing methods and, in particular, significantly improves sensitivity for common CNVs.</p>
@@ -290,18 +290,10 @@ AIC.ns &lt;-<span class="st"> </span>normObj$AIC; BIC.ns &lt;-<span class="st"> 
 </div>
 <div id="running-codex2-with-negative-control-regions" class="section level2">
 <h2>Running CODEX2 with negative control regions</h2>
-<p>We can empirically identify common CNV regions by a first-pass CODEX run: For exons residing in common CNV regions, the s.d. of normalized z-scores across all samples will be large. This can also be provided by the user as known, e.g., from existing database (DGV or dbVar) or knowledge (tumor supressors or oncogenes with recurrent CNA changes).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Empirically identify common CNV regions from the data.</span>
-z.codex2 &lt;-<span class="st"> </span><span class="kw">log</span>(Y_qc[chr.index,]/normObj.null$Yhat[[<span class="kw">which.max</span>(normObj.null$BIC)]])
-<span class="kw">plot</span>(<span class="dv">1</span>:<span class="kw">nrow</span>(z.codex2), <span class="kw">apply</span>(z.codex2, <span class="dv">1</span>, sd))
-<span class="kw">which</span>(<span class="kw">apply</span>(z.codex2,<span class="dv">1</span>,sd)&gt;=<span class="fl">0.25</span>) 
-cnv_index1 &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">apply</span>(z.codex2,<span class="dv">1</span>,sd)&gt;=<span class="fl">0.25</span>) 
-<span class="co"># User-provided indices for common CNVs.</span>
-cnv_index2 &lt;-<span class="st"> </span><span class="dv">1580</span>:<span class="dv">1620</span>
-<span class="kw">all</span>(cnv_index1 ==<span class="st"> </span>cnv_index2)
-
+<p>We can empirically identify common CNV regions by a first-pass CODEX run: For exons residing in common CNV regions, the s.d. of normalized z-scores (using normalize_null) across all samples will be large. This can also be provided by the user as known, e.g., from existing database (DGV or dbVar) or knowledge (tumor supressors or oncogenes with recurrent CNA changes).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cnv_index &lt;-<span class="st"> </span><span class="dv">1580</span>:<span class="dv">1620</span>
 normObj &lt;-<span class="st"> </span><span class="kw">normalize_codex2_nr</span>(<span class="dt">Y_qc =</span> Y_qc[chr.index,], <span class="dt">gc_qc =</span> gc_qc[chr.index], 
-                              <span class="dt">K =</span> <span class="dv">1</span>:<span class="dv">5</span>, <span class="dt">cnv_index =</span> cnv_index2,
+                              <span class="dt">K =</span> <span class="dv">1</span>:<span class="dv">5</span>, <span class="dt">cnv_index =</span> cnv_index,
                               <span class="dt">N =</span> N)
 Yhat.nr &lt;-<span class="st"> </span>normObj$Yhat; fGC.hat.nr &lt;-<span class="st"> </span>normObj$fGC.hat;
 beta.hat.nr &lt;-<span class="st"> </span>normObj$beta.hat; g.hat.nr &lt;-<span class="st"> </span>normObj$g.hat; h.hat.nr &lt;-<span class="st"> </span>normObj$h.hat

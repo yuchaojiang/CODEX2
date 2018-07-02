@@ -172,20 +172,12 @@ par(mfrow = c(1,1))
 
 ## Running CODEX2 with negative control regions
 
-We can empirically identify common CNV regions by a first-pass CODEX run: For exons residing in common CNV regions, the s.d. of normalized z-scores across all samples will be large. This can also be provided by the user as known, e.g., from existing database (DGV or dbVar) or knowledge (tumor supressors or oncogenes with recurrent CNA changes).
+We can empirically identify common CNV regions by a first-pass CODEX run: For exons residing in common CNV regions, the s.d. of normalized z-scores (using normalize_null) across all samples will be large. This can also be provided by the user as known, e.g., from existing database (DGV or dbVar) or knowledge (tumor supressors or oncogenes with recurrent CNA changes).
 
 ```{r, message= FALSE, eval=FALSE}
-# Empirically identify common CNV regions from the data.
-z.codex2 <- log(Y_qc[chr.index,]/normObj.null$Yhat[[which.max(normObj.null$BIC)]])
-plot(1:nrow(z.codex2), apply(z.codex2, 1, sd))
-which(apply(z.codex2,1,sd)>=0.25) 
-cnv_index1 <- which(apply(z.codex2,1,sd)>=0.25) 
-# User-provided indices for common CNVs.
-cnv_index2 <- 1580:1620
-all(cnv_index1 == cnv_index2)
-
+cnv_index <- 1580:1620
 normObj <- normalize_codex2_nr(Y_qc = Y_qc[chr.index,], gc_qc = gc_qc[chr.index], 
-                              K = 1:5, cnv_index = cnv_index2,
+                              K = 1:5, cnv_index = cnv_index,
                               N = N)
 Yhat.nr <- normObj$Yhat; fGC.hat.nr <- normObj$fGC.hat;
 beta.hat.nr <- normObj$beta.hat; g.hat.nr <- normObj$g.hat; h.hat.nr <- normObj$h.hat
