@@ -1,5 +1,3 @@
-setwd("~/Dropbox/CODEX2")
-
 library(CODEX2)
 ##########################################################
 # Initialization
