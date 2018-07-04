@@ -6,13 +6,12 @@ getgc =function (ref, genome = NULL) {
     chr.index=which(as.matrix(seqnames(ref))==chr)
     ref.chr=IRanges(start= start(ref)[chr.index] , end = end(ref)[chr.index])
     if (chr == "X" | chr == "x" | chr == "chrX" | chr == "chrx") {
-      chrtemp <- 23
+      chrtemp <- 'chrX'
     } else if (chr == "Y" | chr == "y" | chr == "chrY" | chr == 
                "chry") {
-      chrtemp <- 24
+      chrtemp <- 'chrY'
     } else {
-      chrtemp <- as.numeric(mapSeqlevels(as.character(chr), 
-                                         "NCBI")[1])
+      chrtemp <- as.numeric(mapSeqlevels(as.character(chr), "NCBI")[1])
     }
     if (length(chrtemp) == 0) message("Chromosome cannot be found in NCBI Homo sapiens database!")
     chrm <- unmasked(genome[[chrtemp]])
