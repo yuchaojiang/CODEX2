@@ -1,7 +1,8 @@
-getgc =function (ref) {
+getgc =function (ref, genome = NULL) {
+  if(is.null(genome)){genome=BSgenome.Hsapiens.UCSC.hg19}
   gc=rep(NA,length(ref))
   for(chr in unique(seqnames(ref))){
-    message("Getting GC content for ", chr, sep = "")
+    message("Getting GC content for chr ", chr, sep = "")
     chr.index=which(as.matrix(seqnames(ref))==chr)
     ref.chr=IRanges(start= start(ref)[chr.index] , end = end(ref)[chr.index])
     if (chr == "X" | chr == "x" | chr == "chrX" | chr == "chrx") {
@@ -14,7 +15,7 @@ getgc =function (ref) {
                                          "NCBI")[1])
     }
     if (length(chrtemp) == 0) message("Chromosome cannot be found in NCBI Homo sapiens database!")
-    chrm <- unmasked(Hsapiens[[chrtemp]])
+    chrm <- unmasked(genome[[chrtemp]])
     seqs <- Views(chrm, ref.chr)
     af <- alphabetFrequency(seqs, baseOnly = TRUE, as.prob = TRUE)
     gc[chr.index] <- round((af[, "G"] + af[, "C"]) * 100, 2)
