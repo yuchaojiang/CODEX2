@@ -65,22 +65,7 @@ library(CODEX2)
 library(BSgenome.Hsapiens.UCSC.hg38)
 # The following object is masked from ‘package:BSgenome.Hsapiens.UCSC.hg19’:  Hsapiens
 
-# Source getgc() function again so it uses the right Hsapiens
-getgc = function (chr, ref) {
-  if (chr == "X" | chr == "x" | chr == "chrX" | chr == "chrx") {
-    chrtemp <- 23
-  } else if (chr == "Y" | chr == "y" | chr == "chrY" | chr == "chry") {
-    chrtemp <- 24
-  } else {
-    chrtemp <- as.numeric(mapSeqlevels(as.character(chr), "NCBI")[1])
-  }
-  if (length(chrtemp) == 0) message("Chromosome cannot be found in NCBI Homo sapiens database!")
-  chrm <- unmasked(Hsapiens[[chrtemp]])
-  seqs <- Views(chrm, ref)
-  af <- alphabetFrequency(seqs, baseOnly = TRUE, as.prob = TRUE)
-  gc <- round((af[, "G"] + af[, "C"]) * 100, 2)
-  gc
-}
+gc <- getgc(ref, genome=BSgenome.Hsapiens.UCSC.hg38)
 ```
 To calculate mappability for hg38 is a bit more complicated and time-consuming. For CODEX2, we pre-compute mappabilities for all hg19 exons and store them as part of the package. For hg38, there are two workarounds: 1) set all mappability to 1 using mapp=rep(1,length(gc)) since mappability is only used in the QC step to filter out exons with low mappability and thus should not affect the final output too much; 2) adopt QC procedures based on annotation results, e.g., filter out all exons within segmental duplication regions, which generally have low mappability.
 
