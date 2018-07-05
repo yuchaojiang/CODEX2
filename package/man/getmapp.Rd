@@ -7,11 +7,12 @@ Get mappability
 Computes mappability for each exon/target/window. To save running time, take values from pre-computed results. Will be later used in QC procedure.
 }
 \usage{
-getmapp(ref)
+getmapp(ref, genome)
 }
 \arguments{
     \item{ref}{
     GRanges object returned from \code{\link{getbambed}}}
+    \item{genome}{Genome assembly, with a default of BSgenome.Hsapiens.UCSC.hg19}
 }
 \details{
 To calculate the exonic mappability, we first construct consecutive reads of 
@@ -33,6 +34,6 @@ Yuchao Jiang \email{yuchaoj@email.unc.edu}
 }
 \examples{
 ref <- GRanges(seqname=22, ranges=IRanges(st = 51207851, end = 51207982))
-mapp <- getmapp(ref)
+mapp <- getmapp(ref, genome = BSgenome.Hsapiens.UCSC.hg19)
 }
 \keyword{ package }

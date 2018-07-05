@@ -7,7 +7,7 @@ Get GC content
     Computes GC content for each exon/target/window. Will be later used in QC procedure and normalization.
 }
 \usage{
-getgc(ref)
+getgc(ref, genome)
 }
 \arguments{
     \item{ref}{

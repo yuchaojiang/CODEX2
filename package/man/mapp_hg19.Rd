@@ -5,16 +5,14 @@
 GRanges with pre-computed mappability for hg19.
 }
 \description{
-GRanges object specifying exonic positions whose 
-mappabilities are pre-computed across the genome.
+GRanges object specifying exonic positions with mappabilities across the genome.
 }
 \usage{data(mapp_hg19)}
 \value{
-GRanges object with mappability pre-computed for hg19.
+GRanges object with mappability for hg19.
 }
 \details{
-Genomic positions for pre-computed mappabilities. Method used is detailed in
-\code{\link{getmapp}}.
+GRanges object with mappability for hg19. Obtained from the ENCODE project 100mer.
 }
 \author{
 Yuchao Jiang \email{yuchaoj@email.unc.edu}
