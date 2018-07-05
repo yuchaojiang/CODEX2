@@ -11,7 +11,7 @@
 
 <meta name="author" content="Yuchao Jiang" />
 
-<meta name="date" content="2018-07-02" />
+<meta name="date" content="2018-07-04" />
 
 <title>CODEX2: Full-spectrum copy number variation detection by high-throughput DNA sequencing</title>
 
@@ -128,6 +128,9 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
 }
@@ -157,7 +160,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">CODEX2: Full-spectrum copy number variation detection by high-throughput DNA sequencing</h1>
 <h4 class="author"><em>Yuchao Jiang</em></h4>
-<h4 class="date"><em>2018-07-02</em></h4>
+<h4 class="date"><em>2018-07-04</em></h4>
 <div class="abstract">
 <p class="abstract">Abstract</p>
 <p>High-throughput DNA sequencing enables detection of copy number variations (CNVs) on the genome-wide scale with finer resolution compared to array-based methods, but suffers from biases and artifacts that lead to false discoveries and low sensitivity. We describe CODEX2, a statistical framework for full-spectrum CNV profiling that is sensitive for variants with both common and rare population frequencies and that is applicable to study designs with and without negative control samples. We demonstrate and evaluate CODEX2 on whole-exome and targeted sequencing data, where biases are the most prominent. CODEX2 outperforms existing methods and, in particular, significantly improves sensitivity for common CNVs.</p>
@@ -215,9 +218,9 @@ ref &lt;-<span class="st"> </span>bambedObj$ref; projectname &lt;-<span class="s
 </div>
 <div id="getting-gc-content-and-mappability" class="section level2">
 <h2>Getting GC content and mappability</h2>
-<p>Obtain GC contents for each exon/target/window.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gc &lt;-<span class="st"> </span><span class="kw">getgc</span>(ref)
-mapp &lt;-<span class="st"> </span><span class="kw">getmapp</span>(ref)
+<p>Obtain GC content and mappability for each exon/target/window. Mappability is calculated from the hg19 mappability from ENCODE (<a href="http://rohsdb.cmb.usc.edu/GBshape/cgi-bin/hgFileUi?db=hg19&amp;g=wgEncodeMapability">link</a>). Mappability for hg38 is lifted over from hg19 (<a href="http://hgdownload.cse.ucsc.edu/goldenPath/hg19/liftOver/">link</a>).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gc &lt;-<span class="st"> </span><span class="kw">getgc</span>(ref, <span class="dt">genome =</span> BSgenome.Hsapiens.UCSC.hg19)
+mapp &lt;-<span class="st"> </span><span class="kw">getmapp</span>(ref, <span class="dt">genome =</span> BSgenome.Hsapiens.UCSC.hg19)
 <span class="kw">values</span>(ref) &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">values</span>(ref), <span class="kw">DataFrame</span>(gc, mapp))  </code></pre></div>
 </div>
 <div id="getting-raw-read-depth" class="section level2">

@@ -25,7 +25,7 @@ knitr::include_graphics("https://raw.githubusercontent.com/yuchaojiang/CODEX2/ma
 
 # Installation
 
-```{r eval = FALSE}
+```{r, eval = FALSE}
 source("https://bioconductor.org/biocLite.R")
 biocLite("WES.1KG.WUGSC")
 
@@ -55,10 +55,10 @@ ref <- bambedObj$ref; projectname <- bambedObj$projectname
 
 ## Getting GC content and mappability
 
-Obtain GC contents for each exon/target/window.
+Obtain GC content and mappability for each exon/target/window. Mappability is calculated from the hg19 mappability from ENCODE ([link](http://rohsdb.cmb.usc.edu/GBshape/cgi-bin/hgFileUi?db=hg19&g=wgEncodeMapability)). Mappability for hg38 is lifted over from hg19 ([link](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/liftOver/)).
 ```{r, message=FALSE}
-gc <- getgc(ref)
-mapp <- getmapp(ref)
+gc <- getgc(ref, genome = BSgenome.Hsapiens.UCSC.hg19)
+mapp <- getmapp(ref, genome = BSgenome.Hsapiens.UCSC.hg19)
 values(ref) <- cbind(values(ref), DataFrame(gc, mapp))  
 ```
 
