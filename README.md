@@ -79,7 +79,7 @@ CODEX2 can be applied to WES of the mouse genome. Only the calculation of GC con
 library(BSgenome.Mmusculus.UCSC.mm10)
 gc <- getgc(ref, genome = BSgenome.Mmusculus.UCSC.mm10)
 ```
-* [Mappability pre-calculation](https://github.com/yuchaojiang/CODEX2/blob/master/mouse/mapp.R) (Note: This step can be computationally extensive and thus parallel computing is recommended. There are two workarounds: 1) set all mappability to 1 using mapp=rep(1,length(gc)) since mappability is only used in the QC step to filter out exons with low mappability and thus should not affect the final output too much; 2) adopt QC procedures based on annotation results, e.g., filter out all exons within segmental duplication regions, which generally have low mappability.
+* [Mappability pre-calculation](https://github.com/yuchaojiang/CODEX2/blob/master/mouse/mapp.R): This step can be computationally extensive and thus parallel computing is recommended. There are two workarounds: 1) set all mappability to 1 using mapp=rep(1,length(gc)) since mappability is only used in the QC step to filter out exons with low mappability and thus should not affect the final output too much; 2) adopt QC procedures based on annotation results, e.g., filter out all exons within segmental duplication regions, which generally have low mappability.
 
 
 ## Common questions
