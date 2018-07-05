@@ -54,7 +54,7 @@ One can load CODEX2's CNV calling results into [IGV](http://www.broadinstitute.o
 * [CODEX2_IGV.R](https://github.com/yuchaojiang/CODEX2/blob/master/IGV_visualization/CODEX2_IGV.R)
 
 ## CODEX2 for hg38?
-CODEX2 by default is for hg19 reference. It can be adapted to hg38: only the calculations of GC content and mappability need to be changed; to get coverage for exons across samples stays the same (make sure that the exonic targets in the bed file are also in hg38 coordinates). To calculte GC content in hg38, you need to download the hg38 reference from [Bioconductor](https://bioconductor.org/packages/BSgenome.Hsapiens.UCSC.hg38/). Then, after loading CODEX2, load the hg38 reference package and use the correct genome argument in the getgc() function.
+CODEX2 by default is for hg19 reference. It can be adapted to hg38: only the calculations of GC content and mappability need to be changed; to get coverage for exons across samples stays the same (make sure that the exonic targets in the bed file are also in hg38 coordinates). To calculte GC content in hg38, you need to download the hg38 reference from [Bioconductor](https://bioconductor.org/packages/BSgenome.Hsapiens.UCSC.hg38/). Then, after loading CODEX2, load the hg38 reference package and use the correct genome argument in the getgc() function to get the corresponding GC content.
 
 ```r
 ## try http:// if https:// URLs are not supported
@@ -67,19 +67,20 @@ library(BSgenome.Hsapiens.UCSC.hg38)
 
 gc <- getgc(ref, genome = BSgenome.Hsapiens.UCSC.hg38)
 ```
-To calculate mappability for hg38 is a bit more complicated and time-consuming. For CODEX2, we pre-compute mappabilities for all hg19 exons and store them as part of the package. For hg38, there are two workarounds: 1) set all mappability to 1 using mapp=rep(1,length(gc)) since mappability is only used in the QC step to filter out exons with low mappability and thus should not affect the final output too much; 2) adopt QC procedures based on annotation results, e.g., filter out all exons within segmental duplication regions, which generally have low mappability.
+
+For mappability, we download the 100mer mappability for hg19 from the ENCODE Project ([link](http://rohsdb.cmb.usc.edu/GBshape/cgi-bin/hgFileUi?db=hg19&g=wgEncodeMapability)) and lifted over from hg19 to hg38 ([link](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/liftOver/)). The mappability for each exon/target/bin is taken as the mean mappability across all overlapped segments by ENCODE, weighted by the lengths of the segments.
 
 Note that CODEX2 can also be adapted to the mouse genome, see below.
 
 ## CODEX2 for mouse genome
-CODEX2 can be applied to WES of the mouse genome. Only the calculation of GC content and mappability needs to be modified from the default (hg19). The library for the mm10 mouse genome sequencing needs to be loaded: 
-* [BSgenome.Mmusculus.UCSC.mm10](http://bioconductor.org/packages/release/data/annotation/html/BSgenome.Mmusculus.UCSC.mm10.html).
+CODEX2 can be applied to WES of the mouse genome. Only the calculation of GC content and mappability needs to be modified from the default (hg19). The library for the mm10 mouse genome sequencing needs to be loaded: [BSgenome.Mmusculus.UCSC.mm10](http://bioconductor.org/packages/release/data/annotation/html/BSgenome.Mmusculus.UCSC.mm10.html).
 * GC content can be calculated with the correct mouse genome:
 ```r
 library(BSgenome.Mmusculus.UCSC.mm10)
 gc <- getgc(ref, genome = BSgenome.Mmusculus.UCSC.mm10)
 ```
-* [Mappability pre-calculation](https://github.com/yuchaojiang/CODEX2/blob/master/mouse/mapp.R) (Note: This step can be computationally extensive and thus parallel computing is recommended. For CODEX2 in its default setting, the mappability for exonic targets in human h19 assembly is pre-computed and stored as part of the package).
+* [Mappability pre-calculation](https://github.com/yuchaojiang/CODEX2/blob/master/mouse/mapp.R) (Note: This step can be computationally extensive and thus parallel computing is recommended. There are two workarounds: 1) set all mappability to 1 using mapp=rep(1,length(gc)) since mappability is only used in the QC step to filter out exons with low mappability and thus should not affect the final output too much; 2) adopt QC procedures based on annotation results, e.g., filter out all exons within segmental duplication regions, which generally have low mappability.
+
 
 ## Common questions
   * How many samples does CODEX2 need? Should I separately run samples from different batches?
