@@ -27,29 +27,10 @@ computemapp<-function(ref.chr, L, genome, chr){
       mapp.chr[mappi]=0
     } else{
       pd = PDict(dict)
-      ci=rep(0,length(pd)); res=matchPDict(pd,genome$chr1)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr2)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr3)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr4)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr5)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr6)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr7)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr8)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr9)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr10)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr11)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr12)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr13)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr14)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr15)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr16)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr17)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr18)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chr19)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chrX)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chrY)
-      ci=ci+elementNROWS(res); res=matchPDict(pd,genome$chrM)
-      ci=ci+elementNROWS(res)
+      ci=rep(0,length(pd))
+      for(t in 1:length(genome)){
+        res=matchPDict(pd,genome[[t]]); ci=ci+elementNROWS(res)
+      }
       mapp.chr[mappi]=1/mean(ci)
     }
   }
