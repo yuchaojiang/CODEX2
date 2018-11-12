@@ -13,8 +13,10 @@ High-throughput DNA sequencing enables detection of copy number variations (CNVs
 
 ## Installation
 ```r
-source("https://bioconductor.org/biocLite.R")
-biocLite("WES.1KG.WUGSC")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("CODEX", version = "3.8")
+BiocManager::install("WES.1KG.WUGSC", version = "3.8")
 
 devtools::install_github("yuchaojiang/CODEX2/package")
 ```
