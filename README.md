@@ -21,10 +21,8 @@ BiocManager::install("WES.1KG.WUGSC", version = "3.8")
 devtools::install_github("yuchaojiang/CODEX2/package")
 ```
 
-
 ## Questions?
-If you've encountered problems or bugs running CODEX2, please report directly [here](https://github.com/yuchaojiang/CODEX2/issues) using the Issues tab by GitHub.
-
+If you have encountered problems or have questions running CODEX2, you can: (1) report directly [here](https://github.com/yuchaojiang/CODEX2/issues) using the Issues tab by GitHub; (2) post in our Google user group https://groups.google.com/d/forum/codex2; (3) email us at codex2@googlegroups.com.
 
 ## Citation
 Yuchao Jiang, Runjin Wang, Eugene Urrutia, Ioannis N. Anastopoulos, Katherine L. Nathanson, Nancy R. Zhang, 2018. CODEX2: full-spectrum copy number variation detection by high-throughput DNA sequencing. *Genome Biology*, 19 (1), 202, 2018. ([link](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-018-1578-y)).
