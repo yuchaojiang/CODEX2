@@ -22,22 +22,24 @@ The figure below illustrates the two experimental designs for which CODEX2 can b
 knitr::include_graphics("https://raw.githubusercontent.com/yuchaojiang/CODEX2/master/demo/Figure1.png")
 ```
 
-
 # Installation
 
 ```{r, eval = FALSE}
-source("https://bioconductor.org/biocLite.R")
-biocLite("WES.1KG.WUGSC")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("BSgenome.Hsapiens.UCSC.hg19", version = "3.8")
+BiocManager::install("BSgenome.Hsapiens.UCSC.hg38", version = "3.8")
+BiocManager::install("CODEX", version = "3.8")
+BiocManager::install("WES.1KG.WUGSC", version = "3.8")
 
 devtools::install_github("yuchaojiang/CODEX2/package")
 ```
-
 
 # Pre-computation and quality control
 
 ## Pre-processing
 
-This step is to get directories of .bam files, read in exon target positions from .bed files, and get sample names. The direct input of CODEX2 include: *bamdir*, which is a vector indicating the directories of all .bam files; *sampname*, which is a column vector with row entries of sample names; *bedFile*, which indicates the directory of the .bed file (WES bait file, no header, sorted by start and end positions); and *chr*, which specifies the chromosome. CODEX2 processes the entire genome chromosome by chromosome; make sure  the chromosome formats are consistent between the .bed and the .bam files.
+This step is to get directories of .bam files, read in exon target positions from .bed files, and get sample names. The direct input of CODEX2 include: *bamdir*, which is a vector indicating the directories of all .bam files; *sampname*, which is a column vector with row entries of sample names; *bedFile*, which indicates the directory of the .bed file (WES target file, no header, sorted by start and end positions with non-overlapping targets); and *chr*, which specifies the chromosome. CODEX2 processes the entire genome chromosome by chromosome; make sure  the chromosome formats are consistent between the .bed and the .bam files.
 
 ```{r, message=FALSE}
 library(CODEX2)
@@ -57,12 +59,12 @@ ref <- bambedObj$ref; projectname <- bambedObj$projectname
 
 Obtain GC content and mappability for each exon/target/window. Mappability is calculated from the hg19 mappability from ENCODE ([link](http://rohsdb.cmb.usc.edu/GBshape/cgi-bin/hgFileUi?db=hg19&g=wgEncodeMapability)). Mappability for hg38 is lifted over from hg19 ([link](http://hgdownload.cse.ucsc.edu/goldenPath/hg19/liftOver/)).
 ```{r, message=FALSE}
-gc <- getgc(ref, genome = BSgenome.Hsapiens.UCSC.hg19)
-mapp <- getmapp(ref, genome = BSgenome.Hsapiens.UCSC.hg19)
+genome = BSgenome.Hsapiens.UCSC.hg19 # hg19
+# library(BSgenome.Hsapiens.UCSC.hg38); genome = BSgenome.Hsapiens.UCSC.hg38 # hg38
+gc <- getgc(ref, genome = genome)
+mapp <- getmapp(ref, genome = genome)
 values(ref) <- cbind(values(ref), DataFrame(gc, mapp))  
 ```
-
-
 
 ## Getting raw read depth
 
@@ -76,8 +78,7 @@ head(Y[,1:5])
 
 ## Quality control
 
-Take a sample-wise and exon-wise quality control procedure on 
-the depth of coverage matrix.
+Take a sample-wise and exon-wise quality control procedure on the depth of coverage matrix.
 ```{r, message = FALSE}
 qcObj <- qc(Y, sampname, ref, cov_thresh = c(20, 4000),
             length_thresh = c(20, 2000), mapp_thresh = 0.9,
@@ -128,7 +129,6 @@ Choose the number of latent Poisson factors. BIC is used as the model selection 
 choiceofK(AIC.null, BIC.null, RSS.null, K = 1:5 , filename = "codex2_null_choiceofK.pdf")
 ```
 
-
 ```{r, echo=FALSE, fig1, fig.height = 2.5, fig.width = 6, fig.align = "center"}
 par(mfrow = c(1, 3))
 plot(1:5, RSS.null, type = "b", xlab = "Number of latent variables", pch=20)
@@ -136,7 +136,6 @@ plot(1:5, AIC.null, type = "b", xlab = "Number of latent variables", pch=20)
 plot(1:5, BIC.null, type = "b", xlab = "Number of latent variables", pch=20)
 par(mfrow = c(1,1))
 ```
-
 
 ## Running CODEX2 with negative control samples
 
@@ -153,13 +152,11 @@ beta.hat.ns <- normObj$beta.hat; g.hat.ns <- normObj$g.hat; h.hat.ns <- normObj$
 AIC.ns <- normObj$AIC; BIC.ns <- normObj$BIC; RSS.ns <- normObj$RSS
 ```
 
-
 Choose the number of latent Poisson factors. BIC is used as the model selection metric by default.
 
 ```{r, eval=FALSE}
 choiceofK(AIC.ns, BIC.ns, RSS.ns, K = 1:5 , filename = "codex2_ns_choiceofK.pdf")
 ```
-
 
 ```{r, echo=FALSE, fig2, fig.height = 2.5, fig.width = 6, fig.align = "center"}
 par(mfrow = c(1, 3))
@@ -168,7 +165,6 @@ plot(1:5, AIC.ns, type = "b", xlab = "Number of latent variables", pch=20)
 plot(1:5, BIC.ns, type = "b", xlab = "Number of latent variables", pch=20)
 par(mfrow = c(1,1))
 ```
-
 
 ## Running CODEX2 with negative control regions
 
@@ -184,10 +180,9 @@ beta.hat.nr <- normObj$beta.hat; g.hat.nr <- normObj$g.hat; h.hat.nr <- normObj$
 AIC.nr <- normObj$AIC; BIC.nr <- normObj$BIC; RSS.nr <- normObj$RSS
 ```
 
-
 # Running segmentation by CODEX2
 
-We offer two versions of segmentation procedures: poisson-likelihood based recursive segmentation (recommended) and hidden Markov model (not recommended). For CODEX2 with negative control regions, simply change Yhat.ns to Yhat.nr in the code below.
+We offer two versions of segmentation procedures: poisson-likelihood based recursive segmentation (recommended) and hidden Markov model (not recommended). For CODEX2 with negative control regions, simply change Yhat.ns to Yhat.nr in the code below. For germline CNV detection, use 'integer' mode; for CNV detection in heterogeneous sample/tissue (e.g., somatic copy number changes in bulk cancer samples), use 'fraction' mode.
 
 ```{r, message=FALSE}
 finalcall.CBS <- segmentCBS(Y_qc[chr.index,],  # recommended
@@ -216,4 +211,3 @@ filter3 <- finalcall.CBS.filter$lratio>40
 filter4 <- (finalcall.CBS.filter$ed_exon-finalcall.CBS.filter$st_exon)>1
 finalcall.CBS.filter=finalcall.CBS.filter[filter3|filter4,]
 ```
-
