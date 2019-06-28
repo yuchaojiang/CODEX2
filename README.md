@@ -15,9 +15,10 @@ High-throughput DNA sequencing enables detection of copy number variations (CNVs
 ```r
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-BiocManager::install("CODEX", version = "3.8")
-BiocManager::install("WES.1KG.WUGSC", version = "3.8")
+BiocManager::install("CODEX")
+BiocManager::install("WES.1KG.WUGSC")
 
+install.packages('devtools')
 devtools::install_github("yuchaojiang/CODEX2/package")
 ```
 
