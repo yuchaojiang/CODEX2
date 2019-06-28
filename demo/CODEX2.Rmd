@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Analysis overview
 
-The figure below illustrates the two experimental designs for which CODEX2 can be applied: (i) case-control design with a group of negative control samples, where the goal is to detect CNVs disproportionately present in the ‘cases’ versus the ‘controls’; and (ii) detection of all CNVs present in all samples design, such as in the Exome Aggregation Consortium. The key innovation in CODEX2 is the usage of negative control genome regions in a genome-wide latent factor model for sample- and position-specific background correction, and the utilization of negative control samples, under a case-control design, to further improve background bias estimation under this model. The negative control genome regions defined by CODEX2 are regions that do not harbor common CNVs, but that are still allowed to harbor rare CNVs, and can be constructed from existing studies or learned from data.
+The figure below illustrates the two experimental designs for which CODEX2 can be applied: (i) case-control design with a group of negative control samples, where the goal is to detect CNVs disproportionately present in the "cases" versus the "controls"; and (ii) detection of all CNVs present in all samples design, such as in the Exome Aggregation Consortium. The key innovation in CODEX2 is the usage of negative control genome regions in a genome-wide latent factor model for sample- and position-specific background correction, and the utilization of negative control samples, under a case-control design, to further improve background bias estimation under this model. The negative control genome regions defined by CODEX2 are regions that do not harbor common CNVs, but that are still allowed to harbor rare CNVs, and can be constructed from existing studies or learned from data.
 
 ```{r, out.width = "600px", fig.align = "center", echo=FALSE}
 knitr::include_graphics("https://raw.githubusercontent.com/yuchaojiang/CODEX2/master/demo/Figure1.png")
@@ -94,8 +94,9 @@ write.table(qcmat, file = paste(projectname, '_qcmat', '.txt', sep=''),
 For demonstration purpose, we in silico spiked in CNVs spanning exon 1580 - 1620 with a population frequency 40%. There are altogether 90 samples, 36 of which have the heterozygous deletion. The toy dataset is stored as part of the CODEX2 R-package.
 
 ```{r}
-# Load pre-stored data.
+# Load pre-stored data. This would not be needed if you are processing your own data and start from the above sections.
 Y_qc <- Y_qc_demo
+colnames(Y_qc) <- paste('sample_', 1:ncol(Y_qc), sep='')
 ref_qc <- ref_qc_demo
 gc_qc <- ref_qc$gc
 ```
@@ -184,18 +185,20 @@ AIC.nr <- normObj$AIC; BIC.nr <- normObj$BIC; RSS.nr <- normObj$RSS
 
 We offer two versions of segmentation procedures: poisson-likelihood based recursive segmentation (recommended) and hidden Markov model (not recommended). For CODEX2 with negative control regions, simply change Yhat.ns to Yhat.nr in the code below. For germline CNV detection, use 'integer' mode; for CNV detection in heterogeneous sample/tissue (e.g., somatic copy number changes in bulk cancer samples), use 'fraction' mode.
 
+The output file is tab delimited and has 13 columns with rows corresponding to CNV events. The columns include sample_name (sample names), chr (chromosome), cnv (deletion or duplication), st_bp (cnv start position in base pair, the start position of the first exon in the cnv), ed_bp (cnv end position in base pair, the end position of the last exon in the cnv), length_kb (CNV length in kb), st_exon (the first exon after QC in the cnv, integer value numbered in qcObj\$ref_qc), ed_exon (the last exon after QC in the cnv, integer value numbered in qcObj\$ref_qc), raw_cov (raw coverage), norm_cov (normalized coverage), copy_no (copy number estimate), lratio (likelihood ratio of CNV event versus copy neutral event), mBIC (modified BIC value, used to determine the stop point of segmentation).
+
 ```{r, message=FALSE}
 finalcall.CBS <- segmentCBS(Y_qc[chr.index,],  # recommended
                             Yhat.ns, optK = which.max(BIC.ns),
                             K = 1:5,
-                            sampname_qc = paste('sample',1:ncol(Y_qc),sep=''),
+                            sampname_qc = colnames(Y_qc),
                             ref_qc = ranges(ref_qc)[chr.index],
                             chr = chr, lmax = 400, mode = "integer")
 
 finalcall.HMM <- segmentHMM(Y_qc[chr.index,],  # not recommended
                             Yhat.ns, optK = which.max(BIC.ns),
                             K = 1:5,
-                            sampname_qc = paste('sample',1:ncol(Y_qc),sep=''),
+                            sampname_qc = colnames(Y_qc),
                             ref_qc = ranges(ref_qc)[chr.index],
                             chr = chr, mode = "integer")
 ```
