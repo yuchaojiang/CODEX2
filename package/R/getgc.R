@@ -14,7 +14,7 @@ getgc =function (ref, genome = NULL) {
       chrtemp <- as.numeric(mapSeqlevels(as.character(chr), "NCBI")[1])
     }
     if (length(chrtemp) == 0) message("Chromosome cannot be found in NCBI Homo sapiens database!")
-    chrm <- unmasked(genome[[chrtemp]])
+    chrm <- unmasked(genome[[paste('chr',chrtemp,sep='')]])
     seqs <- Views(chrm, ref.chr)
     af <- alphabetFrequency(seqs, baseOnly = TRUE, as.prob = TRUE)
     gc[chr.index] <- round((af[, "G"] + af[, "C"]) * 100, 2)
