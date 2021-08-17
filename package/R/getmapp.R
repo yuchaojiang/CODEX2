@@ -1,7 +1,7 @@
 getmapp = function (ref, genome = NULL) {
   if(is.null(genome)){genome = BSgenome.Hsapiens.UCSC.hg19}
-  if(genome@provider_version == 'hg19'){mapp_gref = mapp_hg19}
-  if(genome@provider_version == 'hg38'){mapp_gref = mapp_hg38}
+  if(genome@metadata$genome == 'hg19'){mapp_gref = mapp_hg19}
+  if(genome@metadata$genome == 'hg38'){mapp_gref = mapp_hg38}
   mapp <- rep(1, length(ref))
   seqlevelsStyle(ref)='UCSC'
   for(chr in unique(seqnames(ref))){
